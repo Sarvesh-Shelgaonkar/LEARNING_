@@ -601,3 +601,28 @@ If you want a file-by-file code walkthrough or have questions about a specific p
 
 
 The AI notes from your NOTES.MD file are now rendered as static, readable web content in CoreSubjectsNotes.jsx using markdown formatting. You can add more subjects in the same way by copying their markdown into similar variables and rendering them with <ReactMarkdown>.
+
+
+
+What’s happening?
+
+When you visit /cpp-stl-notes directly, Vercel tries to find a file or folder called cpp-stl-notes on the server.
+Since your app is a Single Page Application (SPA), all routes should be handled by your React app (client-side), not by the server.
+If the server doesn’t find a file at that path, it returns a 404 error.
+How to fix it on Vercel: You need to add a rewrite rule so that all routes are served by your index.html (so React Router can handle them).
+
+Solution: Add a vercel.json file
+In your project root (where package.json is), create a file called vercel.json with the following content:
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
+
+This tells Vercel: for any route, serve the root / (your React app), and let React Router handle the rest.
+
+
+This is not a code bug, but a deployment config issue.
+Add a vercel.json with a rewrite rule as shown above.
+Redeploy, and your SPA routes (like /cpp-stl-notes) will work!
+Let me know if you want me to generate the file for you or ne
