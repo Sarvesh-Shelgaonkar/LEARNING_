@@ -1147,3 +1147,155 @@ for (int i = 0; i < cnt2; i++) nums[idx++] = 2;
 Use **Dutch National Flag Algorithm** for `0, 1, 2` problems.
 It's **O(n)**, **in-place**, and works in a **single scan**.
 
+
+
+Here’s a **complete, structured, and concise note** covering **all the methods you've implemented** for the `merge()` function in LeetCode’s **"Merge Sorted Array"** problem.
+
+---
+
+# ✅ Merge Sorted Array – Notes for All Approaches
+
+**Problem Statement:**
+You are given two sorted integer arrays `nums1` and `nums2`. Merge `nums2` into `nums1` as one sorted array **in-place**.
+
+* `nums1` has a size of `m + n`, with the last `n` elements set to 0, which should be ignored initially.
+* `m` is the number of valid elements in `nums1`, and `n` is the size of `nums2`.
+
+---
+
+## ✅ Approach 1: Brute Force Insert + Sort
+
+### 💡 Idea:
+
+Insert elements of `nums2` into the zero positions of `nums1`, then sort `nums1`.
+
+```cpp
+for (int i = 0; i < nums2.size(); i++) {
+    for (int j = 0; j < nums1.size(); j++) {
+        if (nums1[j] == 0) {
+            nums1[j] = nums2[i];
+            break;
+        }
+    }
+}
+sort(nums1.begin(), nums1.end());
+```
+
+### ✅ Time & Space:
+
+* **Time:** O(n × (m + n) + (m + n) log(m + n))
+* **Space:** O(1)
+* **Drawbacks:** Repeated linear search for insertion, then sort – inefficient.
+
+---
+
+## ✅ Approach 2: Append + Sort
+
+### 💡 Idea:
+
+Directly place `nums2` at the end of `nums1` and sort the full array.
+
+```cpp
+for (int i = 0; i < nums2.size(); i++) {
+    nums1[m + i] = nums2[i];
+}
+sort(nums1.begin(), nums1.end());
+```
+
+### ✅ Time & Space:
+
+* **Time:** O(n + (m + n) log(m + n))
+* **Space:** O(1)
+* **Better than Approach 1**, but still involves sorting.
+
+---
+
+## ✅ Approach 3: Merge Using Extra Space
+
+### 💡 Idea:
+
+Use two pointers and a temporary array to merge `nums1[0..m-1]` and `nums2[0..n-1]`.
+
+```cpp
+int nums3[m + n];
+int ptr1 = 0, ptr2 = 0, idx = 0;
+
+while (ptr1 < m && ptr2 < n) {
+    if (nums1[ptr1] < nums2[ptr2]) nums3[idx++] = nums1[ptr1++];
+    else nums3[idx++] = nums2[ptr2++];
+}
+
+while (ptr1 < m) nums3[idx++] = nums1[ptr1++];
+while (ptr2 < n) nums3[idx++] = nums2[ptr2++];
+
+for (int i = 0; i < m + n; i++) nums1[i] = nums3[i];
+```
+
+### ✅ Time & Space:
+
+* **Time:** O(m + n)
+* **Space:** O(m + n)
+* **Clean and easy**, but not in-place.
+
+---
+
+## ✅ Approach 4: Optimal In-Place Merge from Back
+
+### 💡 Idea:
+
+Start merging from the end to avoid overwriting `nums1`. Use three pointers:
+
+* `i = m - 1` (last valid element in `nums1`)
+* `j = n - 1` (last element in `nums2`)
+* `idx = m + n - 1` (write position from end)
+
+```cpp
+int i = m - 1, j = n - 1, idx = m + n - 1;
+
+while (i >= 0 && j >= 0) {
+    if (nums1[i] >= nums2[j]) nums1[idx--] = nums1[i--];
+    else nums1[idx--] = nums2[j--];
+}
+
+while (j >= 0) nums1[idx--] = nums2[j--];
+```
+
+### ✅ Time & Space:
+
+* **Time:** O(m + n)
+* **Space:** O(1)
+* **Best solution** – truly in-place, fast, and clean.
+
+---
+
+## 📊 Comparison Table
+
+| Approach          | Time Complexity            | Space Complexity | In-place? | Notes                          |
+| ----------------- | -------------------------- | ---------------- | --------- | ------------------------------ |
+| Brute Insert+Sort | O(n×(m+n) + (m+n)log(m+n)) | O(1)             | ✅         | Inefficient, two nested loops  |
+| Append + Sort     | O(n + (m+n)log(m+n))       | O(1)             | ✅         | Simpler than Brute             |
+| Extra Array       | O(m + n)                   | O(m + n)         | ❌         | Clean logic, not space optimal |
+| Two-pointer Back  | O(m + n)                   | O(1)             | ✅ ✅       | Best approach                  |
+
+---
+
+## 🚫 Common Mistake:
+
+### ❗ Incorrect initialization:
+
+```cpp
+int i = m; // ❌ INVALID: out of bounds
+```
+
+* Should be: `int i = m - 1;`
+
+### ❗ Forgetting to copy remaining elements from `nums2`:
+
+* Always run `while (j >= 0)` loop at end to copy leftover `nums2` values.
+
+---
+
+## ✅ Best Practice:
+
+* Always prefer **Approach 4** unless explicitly allowed extra space.
+* For interviews, discuss both extra space and optimal in-place solution.
