@@ -1627,3 +1627,180 @@ public:
 
 ---
 
+
+## ✅ **Leetcode 81. Search in Rotated Sorted Array II (With Duplicates)**
+
+### 🧠 **Problem Summary**
+
+* You're given a **rotated sorted array** `nums` (can contain **duplicates**).
+* You need to check whether a given `target` exists in it or not.
+
+---
+
+## ✅ Approach: **Modified Binary Search (Handles Duplicates)**
+
+### 🔍 **Key Insight**:
+
+* In a rotated array without duplicates, one side is always strictly sorted.
+* But **with duplicates**, equality like `nums[start] == nums[mid]` can make it **uncertain which side is sorted**.
+* So, we need to **skip duplicates** to avoid ambiguity.
+
+---Sure! Here's the **short summary** of the edge case:
+
+---
+in normal approach  we are defining left and right sorted half by comaring mid to st and end  but when there is an edge case where st==mid==end then how will i compiler compare we can see from our naked eyes but how compiler willl understand, and we already check mid!=target so it can be trim down end-- st++ 
+
+When:
+
+```cpp
+nums[start] == nums[mid] == nums[end]
+```
+
+→ You **can’t decide** which half is sorted (both sides look the same due to duplicates).
+
+---
+
+### ✅ Why?
+
+Because:
+
+* Both `nums[start] <= nums[mid]` and `nums[mid] <= nums[end]` are `true`.
+* But **target ≠ nums\[mid]** (already checked).
+* So you **can’t trust comparisons** to find the sorted side.
+
+---
+
+### 🛠️ Solution:
+
+Safely **trim the search space**:
+
+```cpp
+start++;
+end--;
+```
+
+This removes duplicates blocking decision-making.
+
+---
+
+### ✅ When to apply:
+
+Only when:
+
+```cpp
+nums[start] == nums[mid] && nums[mid] == nums[end]
+```
+
+---
+
+Let me know if you want dry run or code too!
+
+
+### 🔢 **Algorithm Steps**:
+
+1. Use two pointers `start` and `end`.
+2. Run a loop while `start <= end`.
+3. Check if `nums[mid] == target`.
+4. If `nums[start] == nums[mid] == nums[end]`, increment `start++` and decrement `end--` to skip duplicates.
+5. If left half is sorted (`nums[start] <= nums[mid]`)
+
+   * If `target` is in that range, reduce `end = mid - 1`.
+   * Else increase `start = mid + 1`.
+6. If right half is sorted:
+
+   * If `target` is in that range, increase `start = mid + 1`.
+   * Else reduce `end = mid - 1`.
+
+---
+
+### ✅ **Code:**
+
+```cpp
+class Solution {
+public:
+    bool search(vector<int>& nums, int target) {
+        int st = 0;
+        int end = nums.size() - 1;
+
+        while (st <= end) {
+            int mid = st + (end - st) / 2;
+            if (nums[mid] == target) return true;
+
+            // ⚠️ Duplicates at all three pointers → can't determine sorted half
+            if (nums[st] == nums[mid] && nums[mid] == nums[end]) {
+                st++;
+                end--;
+                continue;  // ✅ skip rest of loop to avoid wrong assumptions
+            }
+
+            // 🔍 Left half is sorted
+            if (nums[st] <= nums[mid]) {
+                if (nums[st] <= target && target <= nums[mid]) {
+                    end = mid - 1;
+                } else {
+                    st = mid + 1;
+                }
+            }
+
+            // 🔍 Right half is sorted
+            else {
+                if (nums[mid] <= target && target <= nums[end]) {
+                    st = mid + 1;
+                } else {
+                    end = mid - 1;
+                }
+            }
+        }
+
+        return false;
+    }
+};
+
+```
+
+---
+
+### 🧮 **Time Complexity:**
+
+* Worst case: **`O(n)`** when there are too many duplicates (e.g., all elements same).
+* Average case: **`O(log n)`**
+
+### 💾 **Space Complexity:**
+
+* `O(1)` — No extra space used.
+
+---
+
+### ✅ Example Dry Run:
+
+#### Input:
+
+```cpp
+nums = [2,5,6,0,0,1,2], target = 0
+```
+
+1. First iteration: `mid = 3 → nums[mid] = 0 → match → return true`
+
+#### Input:
+
+```cpp
+nums = [2,5,6,0,0,1,2], target = 3
+```
+
+* All comparisons fail, loop ends → return false
+
+---
+⚠️ Why continue is critical?
+If we shrink (st++, end--) but don’t use continue, the remaining if-else logic (to determine sorted side) runs on ambiguous state and can give wrong direction, especially when all values are duplicates (e.g., [1,1,1,1,1]).
+
+
+### ✅ Summary:
+
+| Step               | Description                  |
+| ------------------ | ---------------------------- |
+| Handles rotation   | Yes                          |
+| Handles duplicates | Yes (by skipping duplicates) |
+| Space              | O(1)                         |
+| Worst-case Time    | O(n) (due to duplicates)     |
+| Best/Avg-case Time | O(log n)                     |
+
