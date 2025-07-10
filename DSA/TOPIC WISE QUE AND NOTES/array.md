@@ -1422,3 +1422,208 @@ public:
 | Swap             | Create a greater number                  |
 | Reverse suffix   | Make it the smallest possible            |
 
+
+
+
+Sure! Here's the **complete detailed notes with code** for **all 4 approaches** to solve the **"Search in Rotated Sorted Array"** problem, including **step-by-step explanation, time & space complexity**, and **commented code**.
+
+---
+
+### ✅ Problem:
+
+```cpp
+You are given an integer array `nums` which is sorted in ascending order and then rotated. Find the index of the `target` element in `nums`. Return -1 if not found.
+```
+
+Example:
+
+```cpp
+Input:  nums = [4,5,6,7,0,1,2], target = 0
+Output: 4
+```
+
+---
+
+## ✅ Approach 1: Brute Force – Linear Search
+
+### 🔹 Code:
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] == target) return i;
+        }
+        return -1;
+    }
+};
+```
+
+### 🔹 Time Complexity: `O(n)`
+
+### 🔹 Space Complexity: `O(1)`
+
+> ✔️ Works always, but very slow for large arrays.
+
+---
+
+## ✅ Approach 2: Restore to Sorted → Binary Search (Inefficient)
+
+### 🔹 Logic:
+
+1. Find pivot (`minidx`) → index of minimum element
+2. Rotate the array `minidx` times
+3. Do binary search on sorted array
+4. Return `(mid + minidx) % size` to get original index
+
+### 🔹 Code:
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int minidx = 0;
+        for (int i = 1; i < nums.size(); i++) {
+            if (nums[i] < nums[minidx]) minidx = i;
+        }
+
+        // Rotate array minidx times (inefficient)
+        for (int k = 0; k < minidx; k++) {
+            int temp = nums[0];
+            for (int i = 1; i < nums.size(); i++) {
+                nums[i - 1] = nums[i];
+            }
+            nums[nums.size() - 1] = temp;
+        }
+
+        // Binary Search
+        int low = 0, high = nums.size() - 1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            if (nums[mid] == target) return (mid + minidx) % nums.size();
+            else if (nums[mid] < target) low = mid + 1;
+            else high = mid - 1;
+        }
+        return -1;
+    }
+};
+```
+
+### 🔹 Time Complexity:
+
+* Find min: `O(n)`
+* Rotate array: `O(n²)` ❌
+* Binary search: `O(log n)`
+* ✅ **Overall: O(n²)** (worst case)
+
+---
+
+## ✅ Approach 3: Sort → Binary Search → Adjust Index
+
+### 🔹 Logic:
+
+* Find `minidx` (index of smallest element)
+* Sort the array
+* Do binary search
+* Adjust final answer as: `(mid + minidx) % size`
+
+### 🔹 Code:
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int minidx = 0;
+        for (int i = 1; i < nums.size(); i++) {
+            if (nums[i] < nums[minidx]) minidx = i;
+        }
+
+        sort(nums.begin(), nums.end());
+
+        // Binary Search
+        int low = 0, high = nums.size() - 1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            if (nums[mid] == target) return (mid + minidx) % nums.size();
+            else if (nums[mid] < target) low = mid + 1;
+            else high = mid - 1;
+        }
+
+        return -1;
+    }
+};
+```
+
+### 🔹 Time Complexity:
+
+* Find minidx: `O(n)`
+* Sort: `O(n log n)`
+* Binary search: `O(log n)`
+* ✅ **Overall: O(n log n)**
+
+---
+
+## ✅ Approach 4: Optimized Modified Binary Search (Best 💯)
+
+### 🔹 Logic:
+
+* One half of array is always sorted
+* Determine which half is sorted
+* Use binary search rules accordingly
+
+### 🔹 Code:
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int low = 0, high = nums.size() - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (nums[mid] == target) return mid;
+
+            // Left half is sorted
+            if (nums[low] <= nums[mid]) {
+                if (nums[low] <= target && target < nums[mid]) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            }
+            // Right half is sorted
+            else {
+                if (nums[mid] < target && target <= nums[high]) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+        }
+
+        return -1;
+    }
+};
+```
+
+### 🔹 Time Complexity: `O(log n)`
+
+### 🔹 Space Complexity: `O(1)`
+
+> ✅ Works for all cases including rotated arrays, duplicates (if handled), and negative values.
+
+---
+
+## 🔚 Summary Table
+
+| Approach # | Name                          | Time Complexity | Space | Notes                   |
+| ---------- | ----------------------------- | --------------- | ----- | ----------------------- |
+| 1          | Linear Search                 | O(n)            | O(1)  | Brute-force             |
+| 2          | Rotate + Binary Search        | O(n²)           | O(1)  | Slow rotation           |
+| 3          | Sort → Binary Search          | O(n log n)      | O(1)  | Sort destroys structure |
+| **4**      | **Modified Binary Search** 💯 | **O(log n)**    | O(1)  | ✅ Best approach         |
+
+---
+
