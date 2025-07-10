@@ -1299,3 +1299,126 @@ int i = m; // ❌ INVALID: out of bounds
 
 * Always prefer **Approach 4** unless explicitly allowed extra space.
 * For interviews, discuss both extra space and optimal in-place solution.
+
+
+
+
+
+# ✅ **Next Permutation** – Notes
+
+## 💡 Problem Statement:
+
+Given an array of integers representing a **permutation**, rearrange it to the **next lexicographically greater permutation**. If such an arrangement is not possible, rearrange it to the **lowest possible order** (i.e., sorted in ascending order).
+
+---
+
+## 🔹 **Approach 1: Brute Force**
+
+### 🔍 Idea:
+
+1. Generate **all permutations**.
+2. Sort them.
+3. Find the current permutation using **linear search**, and return the **next one**.
+
+### ⚠️ Drawbacks:
+
+* Very **inefficient** (Time complexity: O(n!) due to permutations).
+* Not feasible for large arrays.
+
+---
+
+## 🔹 **Approach 2: Optimal – Next Lexicographical Permutation (O(n))**
+
+### ✅ Steps:
+
+### 🔸 **Step 1: Find the Pivot**
+
+* Traverse from the end and find the **first index `i` such that `nums[i] < nums[i + 1]`**.
+* This means the sequence after `i` is **non-increasing**, and `nums[i]` is the **pivot**.
+
+### 🔸 **Step 2: Find Just Larger Element**
+
+* Traverse from the end and find the **smallest number greater than `nums[i]`**, say `nums[j]`.
+
+### 🔸 **Step 3: Swap**
+
+* Swap `nums[i]` and `nums[j]`.
+
+### 🔸 **Step 4: Reverse the Suffix**
+
+* Reverse the subarray from `i + 1` to the end to get the next permutation.
+
+---
+
+### ✅ Example:
+
+**Input:** `nums = [1, 2, 3]`
+**Output:** `nums = [1, 3, 2]`
+
+**Steps:**
+
+* Pivot: `2` at index 1 (since 2 < 3)
+* Just larger: `3` at index 2
+* Swap → `[1, 3, 2]`
+* Reverse suffix → no change (already smallest)
+
+---
+
+### ✅ C++ Code:
+
+```cpp
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        int n = nums.size();
+        int i = n - 2;
+
+        // Step 1: Find the pivot
+        while (i >= 0 && nums[i] >= nums[i + 1]) {
+            i--;
+        }
+
+        if (i >= 0) {
+            // Step 2: Find just larger element
+            int j = n - 1;
+            while (nums[j] <= nums[i]) {
+                j--;
+            }
+            // Step 3: Swap
+            swap(nums[i], nums[j]);
+        }
+
+        // Step 4: Reverse the suffix
+        reverse(nums.begin() + i + 1, nums.end());
+    }
+};
+```
+
+---
+
+## 🧠 Intuition:
+
+* To move to the **next greater permutation**, we need to **increase** the number minimally.
+* Swapping the pivot with the **next larger element** achieves this.
+* Reversing the suffix ensures we get the **smallest** number larger than the current one.
+
+---
+
+## 📊 Time & Space Complexity:
+
+| Approach         | Time     | Space |
+| ---------------- | -------- | ----- |
+| Brute Force      | O(n!)    | O(n!) |
+| Optimal (2-pass) | **O(n)** | O(1)  |
+
+---
+
+## ✅ Summary Table:
+
+| Step             | Purpose                                  |
+| ---------------- | ---------------------------------------- |
+| Find pivot       | Locate the first dip from end            |
+| Find just larger | Swap with element just bigger than pivot |
+| Swap             | Create a greater number                  |
+| Reverse suffix   | Make it the smallest possible            |
+
