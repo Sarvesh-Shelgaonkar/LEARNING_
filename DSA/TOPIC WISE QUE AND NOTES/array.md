@@ -1804,3 +1804,388 @@ If we shrink (st++, end--) but don’t use continue, the remaining if-else logic
 | Worst-case Time    | O(n) (due to duplicates)     |
 | Best/Avg-case Time | O(log n)                     |
 
+
+
+
+Here are complete and concise **notes on `unordered_map` in C++** — perfect for revision and interview prep:
+
+---
+
+## 🔹 `unordered_map` in C++
+
+### ✅ Definition:
+
+* An **associative container** that stores **key-value pairs**.
+* Implemented using a **hash table**.
+* **Keys are unique** and mapped to values.
+* **Unordered** → No specific order of elements.
+
+```cpp
+#include <unordered_map>
+unordered_map<int, string> myMap;
+```
+
+---
+
+## 🔹 Time Complexity (Average Case):
+
+| Operation     | Time Complexity |
+| ------------- | --------------- |
+| `insert()`    | O(1)            |
+| `erase()`     | O(1)            |
+| `find()`      | O(1)            |
+| `[]` (access) | O(1)            |
+| `count(key)`  | O(1)            |
+
+⚠️ **Worst case: O(n)** (when many keys hash to the same bucket — very rare with good hash function)
+
+---
+
+## 🔹 Basic Operations:
+
+### ✅ Insert:
+
+```cpp
+umap[key] = value;
+umap.insert({key, value});
+```
+
+### ✅ Access:
+
+```cpp
+cout << umap[2];      // If key not found, inserts key with default value
+cout << umap.at(2);   // Throws exception if key not found
+```
+
+### ✅ Iterate:
+
+```cpp
+for (auto &pair : umap) {
+    cout << pair.first << " " << pair.second;
+}
+```
+
+### ✅ Erase:
+
+```cpp
+umap.erase(key);
+```
+
+### ✅ Find:
+
+```cpp
+if (umap.find(key) != umap.end()) {
+    // key exists
+}
+```
+
+### ✅ Check existence:
+
+```cpp
+if (umap.count(key)) {
+    // key exists
+}
+```
+
+---
+
+## 🔹 Default Initialization:
+
+* `umap[key]` creates the key with a **default value** (`0` for `int`, `""` for `string`, etc.)
+
+Example:
+
+```cpp
+unordered_map<int, int> freq;
+freq[3]++;     // freq[3] becomes 1 even if not initialized
+```
+
+---
+
+## 🔹 Comparison with `map`:
+
+| Feature            | `unordered_map` | `map`               |
+| ------------------ | --------------- | ------------------- |
+| Internal structure | Hash Table      | Red-Black Tree      |
+| Ordering           | No              | Yes (sorted by key) |
+| Time Complexity    | O(1) avg        | O(log n)            |
+| Keys               | Unique          | Unique              |
+
+---
+
+## 🔹 Common Use-Cases:
+
+* Counting frequencies of elements
+* Hashing for fast lookups
+* Caching
+* Storing adjacency lists (graphs)
+
+---
+
+## 🔹 Example:
+
+```cpp
+unordered_map<char, int> freq;
+string s = "aabbc";
+
+for (char c : s) {
+    freq[c]++;
+}
+
+// Output frequencies
+for (auto &it : freq) {
+    cout << it.first << " → " << it.second << endl;
+}
+```
+
+---
+Great! Let's now cover:
+
+### ✅ 1. **Brute Force Linear Search**
+
+### ❌ 2. **Binary Search with `st = 0` and `end = n - 1`** → Problem of **overflow + unsafe index access**
+
+### ✅ 3. **Corrected Binary Search with bounds check**
+
+---
+
+## ✅ 1. **Brute Force Linear Search**
+
+### 🔹 Idea:
+
+Traverse linearly and find the first index where `arr[i] > arr[i + 1]`.
+
+### 🔢 Code:
+
+```cpp
+int peakIndexInMountainArray(vector<int>& arr) {
+    for (int i = 1; i < arr.size(); i++) {
+        if (arr[i] > arr[i + 1]) {
+            return i;
+        }
+    }
+    return -1;
+}
+```
+
+### ⏱️ Time: `O(n)`
+
+### 🧠 Space: `O(1)`
+
+Works fine for all valid mountain arrays.
+
+---
+
+## ❌ 2. **Binary Search with `st = 0`, `end = n - 1`**
+
+### 🔢 Code:
+
+```cpp
+int peakIndexInMountainArray(vector<int>& arr) {
+    int st = 0, end = arr.size() - 1;
+    while (st <= end) {
+        int mid = st + (end - st) / 2;
+        if (arr[mid - 1] < arr[mid] && arr[mid] > arr[mid + 1]) {
+            return mid;
+        } else if (arr[mid] < arr[mid + 1]) {
+            st = mid + 1;
+        } else {
+            end = mid - 1;
+        }
+    }
+    return -1;
+}
+```
+
+---
+
+### ❌ Problems:
+
+1. **Out of Bounds Access**:
+       - If `mid == 0`, then `arr[mid - 1]` is invalid (negative index).
+       - If `mid == n - 1`, then `arr[mid + 1]` is invalid (out of range).
+
+2. **Integer Overflow** (rare but possible):
+       - `mid = (st + end) / 2` can overflow if `st` and `end` are very large (e.g., `2^31 - 1`).
+       - Safer version: `mid = st + (end - st) / 2`
+
+---
+
+## ✅ 3. **Corrected Version**
+
+### ✅ Fix 1: Safe bounds — use `st = 1`, `end = n - 2`
+
+(because in mountain array, peak is never at 0 or n-1)
+
+### ✅ Fix 2: Overflow-safe mid calculation
+
+### 🔢 Correct Code:
+
+```cpp
+int peakIndexInMountainArray(vector<int>& arr) {
+    int st = 1, end = arr.size() - 2;  // skip edges
+    while (st <= end) {
+        int mid = st + (end - st) / 2;  // prevent overflow
+
+        if (arr[mid] > arr[mid - 1] && arr[mid] > arr[mid + 1])
+            return mid;
+        else if (arr[mid] < arr[mid + 1])
+            st = mid + 1;
+        else
+            end = mid - 1;
+    }
+    return -1; // should never happen
+}
+```
+
+---
+
+## 📌 Summary Table:
+
+| Approach          | Time     | Space | Safe from Overflow             | Safe Index Access                | Recommended? |
+| ----------------- | -------- | ----- | ------------------------------ | -------------------------------- | ------------ |
+| Linear Search     | O(n)     | O(1)  | ✅                              | ✅                                | ❌ (slow)     |
+| Binary (V1: st=0) | O(log n) | O(1)  | ❌ `mid = (l+r)/2` may overflow | ❌ May access `arr[-1]`, `arr[n]` | ❌            |
+| ✅ Fixed Binary    | O(log n) | O(1)  | ✅ `mid = l+(r-l)/2`            | ✅ Safe neighbor access           | ✅ Best       |
+
+---
+Here are complete **revision notes** for **Leetcode 162: Find Peak Element**, specifically based on the code you've shared and explained in a structured way with all important concepts, edge cases, and logic.
+
+---
+
+## 📘 Problem: 162. Find Peak Element
+
+> A **peak element** is one that is **strictly greater** than its **neighbors**.
+> Return the index of **any** peak in the array.
+
+🧠 You can assume:
+
+* `nums[-1] = nums[n] = -∞` (so edge elements can also be peaks)
+* You must use **O(log n)** time → use **binary search**
+
+---
+
+## ✅ Example
+
+```cpp
+Input: nums = [1, 2, 3, 1]
+Output: 2 (because 3 > 2 and 3 > 1)
+
+Input: nums = [1, 2, 1, 3, 5, 6, 4]
+Output: 1 or 5 (both 2 and 6 are peaks)
+```
+
+---
+
+## ✅ Your Code: Logic Summary
+
+```cpp
+int findPeakElement(vector<int>& arr)
+```
+
+### 1. **Edge Case Checks**
+
+```cpp
+if (arr.size() == 1) return 0;
+if (arr[0] > arr[1]) return 0;
+if (arr[n-1] > arr[n-2]) return n - 1;
+```
+
+* Check if peak is at **start or end**.
+* Needed because **`mid = 1` to `n-2`** will not cover 0 or n-1.
+
+---
+
+### 2. **Binary Search in Safe Middle Zone**
+
+```cpp
+int st = 1, end = n - 2;
+while (st <= end) {
+    int mid = st + (end - st) / 2;
+    if (arr[mid] > arr[mid-1] && arr[mid] > arr[mid+1])
+        return mid;
+    else if (arr[mid] < arr[mid+1])
+        st = mid + 1;
+    else
+        end = mid - 1;
+}
+```
+
+---
+
+### 3. **Return -1 if no peak found**
+
+```cpp
+return -1;
+```
+
+> (Should never happen if the input has at least one peak — which it always does.)
+
+---
+
+## 🧠 Explanation of Binary Logic
+
+| Condition                                        | Meaning            | Action          |
+| ------------------------------------------------ | ------------------ | --------------- |
+| `arr[mid] > arr[mid-1] && arr[mid] > arr[mid+1]` | Found peak         | return `mid`    |
+| `arr[mid] < arr[mid+1]`                          | Peak lies to right | `st = mid + 1`  |
+| Else                                             | Peak lies to left  | `end = mid - 1` |
+
+---
+
+## 📈 Time and Space Complexity
+
+| Complexity | Value                      |
+| ---------- | -------------------------- |
+| Time       | `O(log n)` — binary search |
+| Space      | `O(1)` — no extra space    |
+
+---
+
+## ✅ Final Clean Code Version
+
+```cpp
+class Solution {
+public:
+    int findPeakElement(vector<int>& arr) {
+        int n = arr.size();
+
+        if (n == 1) return 0;
+        if (arr[0] > arr[1]) return 0;
+        if (arr[n - 1] > arr[n - 2]) return n - 1;
+
+        int st = 1, end = n - 2;
+        while (st <= end) {
+            int mid = st + (end - st) / 2;
+
+            if (arr[mid] > arr[mid - 1] && arr[mid] > arr[mid + 1])
+                return mid;
+            else if (arr[mid] < arr[mid + 1])
+                st = mid + 1;
+            else
+                end = mid - 1;
+        }
+
+        return -1;  // logically unreachable
+    }
+};
+```
+
+---
+
+## 📌 Key Takeaways
+
+* A peak can be at **start**, **end**, or **middle**.
+* Use binary search to achieve **O(log n)**.
+* Carefully handle **edge indices** to avoid `out-of-bound` errors.
+* The function always finds **at least one peak**, even in a flat-looking array like `[1,2,3,1]`.
+
+---
+
+| Problem       | Leetcode **852**<br>`peakIndexInMountainArray` | Leetcode **162**<br>`findPeakElement`                      |
+| ------------- | ---------------------------------------------- | ---------------------------------------------------------- |
+| Array Type    | **Mountain Array** (guaranteed)                | **Any array**, possibly flat/increasing/decreasing         |
+| Peak Location | Not at `0` or `n-1`                            | Peak can be at `0`, `n-1`, or middle                       |
+| Edge values   | Not needed                                     | Must handle edge values (`nums[-1] = nums[n] = -∞`)        |
+| Goal          | Return **the peak** (only one)                 | Return **any** peak (possibly multiple)                    |
+| Strategy      | Binary Search with bounds `1` to `n-2`         | Binary Search with bounds `0` to `n-1` and **edge checks** |
