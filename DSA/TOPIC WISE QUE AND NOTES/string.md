@@ -513,3 +513,315 @@ public:
 | ✅ Clean, reliable logic   | Handles multiple, trailing, and leading spaces |
 
 ---
+
+
+
+
+# Remove All Occurrences of a Substring
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+string removeOccurrences(string s, string part) {
+    while (!s.empty() && s.find(part) < s.length()) {
+        // Find the first position where 'part' occurs
+        int pos = s.find(part);
+
+        // Remove 'part' from that position
+        s.erase(pos, part.length());
+    }
+    return s;
+}
+
+int main() {
+    string s = "daabcbaabcbc";
+    string part = "abc";
+
+    string result = removeOccurrences(s, part);
+    cout << "Result: " << result << endl;  // Output: dab
+
+    return 0;
+}
+
+
+1. while (!s.empty() && s.find(part) < s.length())
+Loop continues as long as:
+
+String s is not empty, and
+
+part is found in s
+
+✅ s.find(part) returns:
+
+The starting index if found
+
+string::npos (a big number) if not found
+
+So s.find(part) < s.length() → checks if it's valid.
+
+2. int pos = s.find(part);
+
+
+
+
+
+
+---
+
+# ✅ Question: permutation in string 
+
+> Given two strings `s1` and `s2`, return `true` if `s2` contains a **permutation** of `s1`, else return `false`.
+
+---
+
+# ✅ Your Code:
+
+```cpp
+class Solution {
+public:
+    bool issamefreq(int freq1[], int freq2[]) {
+        for (int i = 0; i < 26; i++) {
+            if (freq1[i] != freq2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool checkInclusion(string s1, string s2) {
+        int freq[26] = {0};
+        for (int i = 0; i < s1.length(); i++) {
+            freq[s1[i] - 'a']++;
+        }
+
+        int winsize = s1.length();
+
+        for (int i = 0; i < s2.length(); i++) {
+            int windfreq[26] = {0};
+            int idx = i;
+            int winidx = 0;
+
+            while (winidx < winsize && idx < s2.length()) {
+                windfreq[s2[idx] - 'a']++;
+                idx++;
+                winidx++;
+            }
+
+            if (issamefreq(freq, windfreq)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+};
+```
+
+---
+
+# ✅ Explanation
+
+### 🧠 Idea:
+
+* A **permutation** of `s1` must have the **same frequency** of characters.
+* So, slide a **window of size `s1.length()`** over `s2`, and compare character frequencies.
+
+---
+
+### 🔄 Step-by-step:
+
+1. **Count frequency of all characters** in `s1` → `freq[26]`.
+
+2. Use a **loop on `s2`**, and for each index `i`, do:
+
+   * Create a **new frequency array `windfreq[26]`** for window of size `winsize`.
+   * Use a nested loop (`while`) to collect frequency of current window substring starting at `i`.
+
+3. After creating `windfreq`, call `issamefreq()` to compare with `s1`'s frequency.
+
+4. If match found → return `true`.
+
+5. If loop finishes with no match → return `false`.
+
+---
+
+## ⚠️ Drawbacks in Your Code
+
+| Issue                                                                     | Why it matters                                       |
+| ------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `windfreq[26]` recreated in every iteration                               | O(n×26) extra memory repeatedly                      |
+| Not using true sliding window                                             | Less efficient: recalculating whole window each time |
+| Outer loop runs till `s2.length()` instead of `s2.length() - winsize + 1` | May check incomplete windows at the end              |
+
+---
+
+# ⏱ Time and Space Complexity
+
+## ✅ Time Complexity:
+
+```cpp
+O((n - m + 1) × 26) = O(n × 26) ≈ O(n)
+```
+
+* `n = s2.length()`
+* `m = s1.length()`
+* For each starting index `i` in `s2`, you:
+
+  * create a fresh frequency array of size 26 → O(26)
+  * compare with original → O(26)
+
+### So: `O(n × 26)` → **efficient in practice**
+
+---
+
+## ✅ Space Complexity:
+
+```cpp
+O(26 × 2) = O(1)
+```
+
+* 2 frequency arrays of size 26: `freq[26]`, `windfreq[26]`
+* All fixed-size → space is constant
+
+---
+
+# ✅ Example Walkthrough
+
+```cpp
+s1 = "ab", s2 = "eidbaooo"
+
+→ freq = [1 for a, 1 for b]
+
+→ Slide window of size 2 over s2:
+   - "ei" → freq mismatch ❌
+   - "id" → ❌
+   - "db" → ❌
+   - "ba" → ✅ match → return true
+```
+
+---
+
+# ✅ Summary
+
+| Aspect             | Value                                                      |
+| ------------------ | ---------------------------------------------------------- |
+| ✅ Correctness      | Yes                                                        |
+| ✅ Time Complexity  | O(n × 26) = O(n)                                           |
+| ✅ Space Complexity | O(1)                                                       |
+| ⚠️ Optimization    | Could avoid recalculating window freq using sliding window |
+
+---
+
+
+
+
+# String Compression
+
+
+
+
+Great work! You've implemented the **String Compression** problem as asked in **Leetcode 443**.
+
+Let’s now:
+
+1. ✅ Explain your code step-by-step
+2. ✅ Show an example
+3. ✅ Give time and space complexity
+4. ✅ Suggest small improvements if needed
+
+---
+
+## ✅ Problem Statement:
+
+> Given a vector of characters `chars`, compress it **in-place** by replacing groups of repeated characters with the character followed by the count (if >1), and return the new length.
+
+---
+
+## ✅ Your Code (Well-Written):
+
+```cpp
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+        int idx = 0; // position to write compressed result
+        int i = 0;   // pointer to scan input
+
+        while (i < chars.size()) {
+            int ch = chars[i]; // current character
+            int count = 0;
+
+            // count how many times ch is repeated
+            while (i < chars.size() && ch == chars[i]) {
+                count++;
+                i++;
+            }
+
+            chars[idx] = ch; // write the character
+            idx++;
+
+            if (count > 1) {
+                string str = to_string(count); // convert count to string
+                for (auto it : str) {
+                    chars[idx] = it; // write each digit of count
+                    idx++;
+                }
+            }
+        }
+
+        chars.resize(idx); // remove extra chars
+        return idx;
+    }
+};
+```
+
+---
+
+## 🔍 Example Dry Run
+
+**Input:**
+
+```cpp
+chars = ['a','a','b','b','c','c','c']
+```
+
+**Steps:**
+
+| Current Char | Count | Output so far               |
+| ------------ | ----- | --------------------------- |
+| `'a'`        | 2     | `['a','2']`                 |
+| `'b'`        | 2     | `['a','2','b','2']`         |
+| `'c'`        | 3     | `['a','2','b','2','c','3']` |
+
+**Return:** `6`
+**Modified Vector:** `['a','2','b','2','c','3']`
+
+---
+
+## ✅ Time & Space Complexity
+
+| Metric     | Value                                          |
+| ---------- | ---------------------------------------------- |
+| Time (TC)  | **O(n)** — One pass through the input          |
+| Space (SC) | **O(1)** — In-place (ignoring output resizing) |
+
+---
+
+## ✅ Improvements (Minor)
+
+1. **Use `char ch = chars[i];`** instead of `int ch = chars[i];` — avoid unnecessary promotion.
+2. `chars.resize(idx);` is optional if question doesn’t require shrinking vector size.
+
+### Modified line:
+
+```cpp
+char ch = chars[i];  // instead of int ch
+```
+
+---
+
+## ✅ Final Thoughts
+
+* Your logic is **correct** ✅
+* Your code is **clean and efficient** ✅
+* Used `to_string(count)` + digit-wise insertion correctly ✅
