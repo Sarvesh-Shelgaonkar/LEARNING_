@@ -1677,3 +1677,261 @@ int tileWays(int n) {
 ---
 
 Would you like me to show this in Python or apply this DP to a different tiling variation (e.g. M×N board with 1×M tiles)?
+
+
+
+
+
+
+
+
+
+# remove duplicated from a string
+
+// User function template for C++
+class Solution {
+  public:
+    string removeDuplicates(string &s) {
+        // code here
+    //     int arrc[26]={0};
+    //      int arrs[26]={0};
+    //      string ans="";
+    //     for(int i=0;i<s.length();i++){
+    //         if(isupper(s[i])){
+    //             if(arrc[s[i]-'A']==0){
+    //                  ans+=s[i];
+    //             }
+               
+    //             arrc[s[i]-'A']++;
+                
+    //         }
+    //         else{
+    //             if(arrs[s[i]-'a']==0){
+    //                  ans+=s[i];
+    //             }
+    //             arrs[s[i]-'a']++;
+    //         }
+    //     }
+    //     return ans;
+    // }
+    
+    bool vis[256]={false};
+    return ans(s,vis,0);
+    }
+    string ans(string &s,bool vis[],int i){
+        if(i==s.length()){return "";}
+        char ch=s[i];
+        if(!vis[ch]){
+            vis[ch]=true;
+            return ch+ans(s,vis,i+1);
+        }
+        else{
+            return ans(s,vis,i+1);
+        }
+    }
+};
+
+Let's do a **step-by-step call execution (dry run)** for your **corrected recursive function** to remove duplicates from a string.
+
+---
+
+## ✅ Function Recap (Corrected)
+
+```cpp
+class Solution {
+public:
+    string removeDuplicates(string &s) {
+        bool visited[256] = {false}; // track visited chars by ASCII
+        return helper(s, 0, visited);
+    }
+
+private:
+    string helper(string &s, int idx, bool visited[]) {
+        if (idx == s.length()) return "";
+
+        char ch = s[idx];
+        if (!visited[ch]) {
+            visited[ch] = true;
+            return ch + helper(s, idx + 1, visited);
+        } else {
+            return helper(s, idx + 1, visited);
+        }
+    }
+};
+```
+
+---
+
+## 🧪 Input: `"abac"`
+
+Let's walk through the recursive calls:
+
+---
+
+### Initial State
+
+* `s = "abac"`
+* `visited[256]` = all false
+* Initial call: `helper(s, 0, visited)`
+
+---
+
+### 🔁 Call Execution Tree
+
+```
+helper(s, 0)
+  ch = 'a', visited['a'] = false
+  → mark visited['a'] = true
+  → return 'a' + helper(s, 1)
+
+    helper(s, 1)
+    ch = 'b', visited['b'] = false
+    → mark visited['b'] = true
+    → return 'b' + helper(s, 2)
+
+      helper(s, 2)
+      ch = 'a', visited['a'] = true (already visited)
+      → return helper(s, 3)
+
+        helper(s, 3)
+        ch = 'c', visited['c'] = false
+        → mark visited['c'] = true
+        → return 'c' + helper(s, 4)
+
+          helper(s, 4)
+          → idx == s.length() → return ""
+```
+
+---
+
+### 🔁 Return Stack Unwinds:
+
+```
+helper(4) → ""
+helper(3) → 'c' + "" = "c"
+helper(2) → "c"
+helper(1) → 'b' + "c" = "bc"
+helper(0) → 'a' + "bc" = "abc"
+```
+
+---
+
+## ✅ Final Answer: `"abc"`
+
+Duplicates (`'a'` repeated) are skipped on second appearance.
+
+---
+
+## 🧠 Summary Table
+
+| Call         | Char  | Visited?  | Action                  | Returns   |
+| ------------ | ----- | --------- | ----------------------- | --------- |
+| helper(0)    | 'a'   | No        | Add + recurse           | 'a' + ... |
+| helper(1)    | 'b'   | No        | Add + recurse           | 'b' + ... |
+| helper(2)    | 'a'   | Yes       | Skip + recurse          | "c"       |
+| helper(3)    | 'c'   | No        | Add + recurse           | 'c' + ""  |
+| helper(4)    | —     | —         | End of string           | ""        |
+
+---
+
+Let me know if you want:
+Great question! Let’s break down **how to think and approach a problem like “Remove Duplicates from String using Recursion.”**
+
+---
+
+## 🎯 Problem Statement
+
+> Given a string `s`, return a new string with **only the first occurrence** of each character (keep the order), using **recursion**.
+
+---
+
+## 🧠 Step-by-Step Thinking Approach
+
+### 🔹 1. **Understand the core idea**
+
+* You need to **build a new string** character by character.
+* Only include a character **if it hasn't appeared before**.
+* You can track "already seen" characters using a `visited[]` array or a `set`.
+
+---
+
+### 🔹 2. **Break into subproblems**
+
+Ask:
+
+> “What’s the smallest version of this problem?”
+
+* For an empty string → result is empty.
+* For 1 character → either add it or skip it.
+
+So we can think recursively:
+
+```
+removeDuplicates("abac")
+= 'a' + removeDuplicates("bac")    (if 'a' not visited)
+= skip + removeDuplicates("bac")   (if visited)
+```
+
+---
+
+### 🔹 3. **Recursive Pattern**
+
+* At each step, look at `s[idx]`:
+
+  * If `s[idx]` is **not visited**, include it + recurse for rest
+  * Else, just recurse for the rest
+
+This matches the standard recursive pattern:
+
+```
+f(s, idx):
+    if idx == s.length: return ""
+    if s[idx] not visited:
+        mark visited
+        return s[idx] + f(s, idx+1)
+    else:
+        return f(s, idx+1)
+```
+
+---
+
+### 🔹 4. **Why Recursion Works**
+
+Recursion is good here because:
+
+* You can **process one character at a time**
+* You naturally move from left to right
+* The recursion stack helps you **build the answer in order**
+
+---
+
+## ✅ Final Checklist (When You Think of Recursion)
+
+| Question                       | Ask Yourself                                        |
+| ------------------------------ | --------------------------------------------------- |
+| What is the base case?         | When to stop recursion (e.g. end of string)         |
+| What is the recursive call?    | What subproblem looks like (next character)         |
+| What do I return?              | The correct value to pass back up (string building) |
+| How to track progress?         | Use `visited[]` or `unordered_set<char>`            |
+
+---
+
+## ✨ Mnemonic to Remember
+
+> "🎯 See one, ✅ Keep it. 👀 Seen again? ❌ Skip it."
+
+---
+
+## 🧩 Summary of Your Approach:
+
+1. Understand: You need to keep first occurrence only.
+2. Think: “Process left to right, 1 char at a time.”
+3. Plan:
+
+   * Base case: `idx == s.length()` → return `""`
+   * Track visited characters
+   * If current char is new → keep it and recurse
+   * Else → skip and recurse
+4. Code it recursively with return values.
+
+---
