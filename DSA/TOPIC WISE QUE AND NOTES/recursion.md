@@ -966,3 +966,247 @@ Call 0: i = 0, subans = []
 
 <img src="ChatGPT Image Jul 15, 2025, 08_01_30 PM.png" width="1100" height="400">
 
+
+
+
+
+
+
+# 🧾 Problem: Leetcode 34 — Find First and Last Position of Element in Sorted Array
+
+
+
+
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int>ans;
+        
+        firstocc(nums,target,0,ans);
+        int ansreturned=last(nums,target,0,ans);
+        ans.push_back(ansreturned);
+        return ans;
+    }
+    void firstocc(vector<int>& nums, int target,int st,vector<int>& ans){
+        if(st==nums.size()){ans.push_back(-1);return;}
+        if(nums[st]==target){
+           ans.push_back(st);
+           return;
+        } 
+        firstocc(nums,target,st+1,ans);
+    }
+    int last(vector<int>& nums, int target,int st,vector<int>& ans){
+        if(st==nums.size()){return -1;}
+        int idx=last(nums,target,st+1,ans);
+        if(idx==-1){
+            if(nums[st]==target){
+                return st;
+            }
+        }
+        return idx;
+    }
+};
+
+### 🧾 **Your Code Summary**
+
+```cpp
+vector<int> searchRange(vector<int>& nums, int target) {
+    vector<int> ans;
+    firstocc(nums, target, 0, ans);
+    int ansreturned = last(nums, target, 0, ans);
+    ans.push_back(ansreturned);
+    return ans;
+}
+```
+
+#### `firstocc(...)` – finds the first occurrence (pushes to `ans`)
+
+#### `last(...)` – recursively finds the last occurrence and returns it
+
+---
+
+### 🧪 Example Input
+
+```cpp
+nums = {5, 7, 7, 8, 8, 10}, target = 8
+```
+
+### ✅ Expected Output: `[3, 4]`
+
+---
+
+### 🔍 Step-by-Step Call Stack Trace
+
+Let’s go step by step for both `firstocc` and `last`.
+
+---
+
+### 🔁 1. `firstocc(nums, 8, 0, ans)`
+
+Initial `ans = {}`
+
+```
+st = 0 → nums[0] = 5 ≠ 8 → recurse
+st = 1 → nums[1] = 7 ≠ 8 → recurse
+st = 2 → nums[2] = 7 ≠ 8 → recurse
+st = 3 → nums[3] = 8 == 8 → ans.push_back(3); return
+```
+Call 1: st = 0, nums[0] = 4 → no match → recursive call st = 1
+
+Call 2: st = 1, nums[1] = 3 → no match → recursive call st = 2
+
+Call 3: st = 2, nums[2] = 7 → match!
+→ ans.push_back(2)
+→ return — now backtracks to previous call (call 2), but nothing more is done there
+
+Each prior call now finishes with no action after the recursive call.
+
+#### 🔁 Call Stack at that point:
+
+```
+firstocc(0) → firstocc(1) → firstocc(2) → firstocc(3) → FOUND → push 3
+```
+
+Now: `ans = [3]`
+
+---
+
+### 🔁 2. `last(nums, 8, 0, ans)`
+
+You call `last()` from `st = 0`, and it goes all the way to the end (right to left logic):
+
+#### Recursive calls:
+
+```
+st = 0 → call last(1)
+st = 1 → call last(2)
+st = 2 → call last(3)
+st = 3 → call last(4)
+st = 4 → call last(5)
+st = 5 → call last(6)
+st = 6 → st == nums.size() → return -1
+```
+
+#### Then unwind:
+
+```
+st = 5 → nums[5] = 10 ≠ 8 → idx = -1 → return -1
+st = 4 → nums[4] = 8 == target → idx = -1 → return 4 ✅
+st = 3 → idx = 4 → return 4
+st = 2 → idx = 4 → return 4
+st = 1 → idx = 4 → return 4
+st = 0 → idx = 4 → return 4
+```
+
+---
+
+### ✅ Final `ans`
+
+Initially:
+
+```cpp
+ans = [3]
+```
+
+Then:
+
+```cpp
+ansreturned = 4
+ans.push_back(4)
+```
+
+---
+
+### 🎯 Final Output:
+
+```
+ans = [3, 4]
+```
+
+---
+
+### 📌 Summary of Call Stack Flow
+
+#### `firstocc` (left to right):
+
+```
+firstocc(0)
+ → firstocc(1)
+   → firstocc(2)
+     → firstocc(3)  ✅ FOUND → push 3
+```
+firstocc(nums, 7, 0, ans)
+  ↳ firstocc(nums, 7, 1, ans)
+     ↳ firstocc(nums, 7, 2, ans)
+        ↳ nums[2] == 7 → ans.push_back(2); return
+     ↳ return
+  ↳ return
+
+
+#### `last` (right to left):
+
+```
+last(0)
+ → last(1)
+   → ...
+     → last(6) → return -1
+     → last(5) → -1
+     → last(4) ✅ FOUND → return 4
+ ← unwind up with idx = 4
+```
+
+---
+
+
+
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int> ans;
+        int firstIndex = firstocc(nums, target, 0);
+        int lastIndex = last(nums, target, 0);
+        ans.push_back(firstIndex);
+        ans.push_back(lastIndex);
+        return ans;
+    }
+
+    int firstocc(vector<int>& nums, int target, int st) {
+        if (st == nums.size()) return -1;
+        if (nums[st] == target) return st;
+        return firstocc(nums, target, st + 1);
+    }
+
+    int last(vector<int>& nums, int target, int st) {
+        if (st == nums.size()) return -1;
+        int idx = last(nums, target, st + 1);
+        if (idx == -1 && nums[st] == target) return st;
+        return idx;
+    }
+};
+Call: firstocc(nums, 8, 0)
+ → nums[0] = 5 ≠ 8 → recurse
+  → firstocc(nums, 8, 1)
+    → nums[1] = 7 ≠ 8 → recurse
+     → firstocc(nums, 8, 2)
+       → nums[2] = 7 ≠ 8 → recurse
+        → firstocc(nums, 8, 3)
+          → nums[3] = 8 == 8 ✅ found → return 3
+← return 3 to firstocc(2)
+← return 3 to firstocc(1)
+← return 3 to firstocc(0)
+
+
+Call: last(nums, 8, 0)
+ → call last(nums, 8, 1)
+  → call last(nums, 8, 2)
+   → call last(nums, 8, 3)
+    → call last(nums, 8, 4)
+     → call last(nums, 8, 5)
+      → call last(nums, 8, 6)
+        → st == nums.size() → return -1
+st = 5 → nums[5] = 10 ≠ 8 → idx = -1 → return -1
+st = 4 → nums[4] = 8 == target → idx == -1 → return 4 ✅
+st = 3 → idx != -1 → return 4
+st = 2 → idx != -1 → return 4
+st = 1 → idx != -1 → return 4
+st = 0 → idx != -1 → return 4
