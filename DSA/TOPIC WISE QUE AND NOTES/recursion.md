@@ -1606,6 +1606,24 @@ int main() {
     return 0;
 }
 ```
+We use **Memoization** to avoid repeated calls.
+class Solution {
+  public:
+    int numberOfWays(int n) {
+        vector<int> dp(n + 1, -1);  // dp[0..n]
+        return solve(n, dp);
+    }
+
+    int solve(int n, vector<int>& dp) {
+        if (n == 0 || n == 1)
+            return 1;
+
+        if (dp[n] != -1)
+            return dp[n];
+
+        return dp[n] = solve(n - 1, dp) + solve(n - 2, dp);
+    }
+};
 
 ---
 
