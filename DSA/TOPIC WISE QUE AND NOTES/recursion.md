@@ -1210,3 +1210,183 @@ st = 3 → idx != -1 → return 4
 st = 2 → idx != -1 → return 4
 st = 1 → idx != -1 → return 4
 st = 0 → idx != -1 → return 4
+
+
+
+# 1st occurence in a string
+
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int st = 0;
+        int n = needle.length();
+        return ans(haystack, needle, st, n);
+    }
+
+    int ans(string haystack, string needle, int st, int n) {
+        // base case: if remaining haystack is shorter than needle
+        if (st > haystack.length() - n)
+            return -1;
+
+        // match found
+        if (haystack.substr(st, n) == needle)
+            return st;
+
+        // recursive call
+        return ans(haystack, needle, st + 1, n);
+    }
+};
+
+
+
+class Solution {
+public:
+    double myPow(double x, int n) {
+        long long N = n;  // Handle INT_MIN
+        if (N < 0) {
+            x = 1 / x;
+            N = -N;
+        }
+        return fastPow(x, N);
+    }
+
+    double fastPow(double x, long long n) {
+        if (n == 0) return 1.0;
+
+        double half = fastPow(x, n / 2);
+        double halfsq = half * half;
+
+        if (n % 2 == 0)
+            return halfsq;
+        else
+            return x * halfsq;
+    }
+};
+Sure! Let's go through your code **step by step** — it's a clean and efficient **recursive implementation of `pow(x, n)` using Fast Exponentiation (a.k.a. Exponentiation by Squaring)**.
+
+---
+
+### 🧠 Goal:
+
+Implement `pow(x, n)` that returns $x^n$ for any `x` (double) and `n` (int), including negative exponents and large powers.
+
+---
+
+## 🔍 Code Explanation
+
+```cpp
+double myPow(double x, int n) {
+    long long N = n;  // ✅ convert n to long long to handle edge cases like INT_MIN
+```
+
+* **Why long long?**
+
+  * `n` can be `INT_MIN = -2,147,483,648`
+  * `-n` overflows because `+2,147,483,648` can't fit in `int`
+  * `long long` avoids overflow
+
+---
+
+```cpp
+    if (N < 0) {
+        x = 1 / x;      // Convert x^(-n) to (1/x)^n
+        N = -N;
+    }
+```
+
+* **Handling negative exponents:**
+
+  * $x^{-n} = \frac{1}{x^n}$
+  * So flip `x → 1/x`, and use positive exponent
+
+---
+
+```cpp
+    return fastPow(x, N); // 🔁 Call helper function to compute x^N
+```
+
+* Calls the optimized recursive function that works in **O(log n)** time
+
+---
+
+## 🔁 fastPow(x, n) — Recursive Fast Exponentiation
+
+```cpp
+double fastPow(double x, long long n) {
+    if (n == 0) return 1.0;
+```
+
+* **Base case:**
+
+  * Anything to the power of 0 is 1
+
+---
+
+```cpp
+    double half = fastPow(x, n / 2);
+    double halfsq = half * half;
+```
+
+* **Recursive idea:**
+
+  * Divide the problem:
+    $x^n = x^{n/2} \times x^{n/2}$
+    So compute it once → reuse
+
+---
+
+```cpp
+    if (n % 2 == 0)
+        return halfsq;
+    else
+        return x * halfsq;
+```
+
+* If `n` is even:
+  $x^n = (x^{n/2})^2$
+* If `n` is odd:
+  $x^n = (x^{n/2})^2 \times x$
+
+---
+
+## 🧪 Example: `myPow(2.0, 5)`
+
+Breaks down as:
+
+```
+myPow(2.0, 5)
+→ fastPow(2.0, 5)
+   → fastPow(2.0, 2)
+      → fastPow(2.0, 1)
+         → fastPow(2.0, 0) = 1
+         → half = 1, halfsq = 1
+         → odd → return 2 * 1 = 2
+      → half = 2, halfsq = 4
+      → even → return 4
+   → half = 4, halfsq = 16
+   → odd → return 2 * 16 = 32
+```
+
+✅ Final output: `32.0`
+
+---
+
+## 🕒 Time and Space Complexity
+
+| Operation | Complexity                                    |
+| --------- | --------------------------------------------- |
+| Time      | **O(log n)** — divide exponent by 2 each time |
+| Space     | **O(log n)** — due to recursive stack calls   |
+
+---
+
+## ✅ Handles All Cases:
+
+| Case           | Handled? | Explanation                        |
+| -------------- | -------- | ---------------------------------- |
+| Positive `n`   | ✅        | Recursive divide                   |
+| Negative `n`   | ✅        | Inverts `x` to `1/x`               |
+| `n == 0`       | ✅        | Base case                          |
+| `n == INT_MIN` | ✅        | Prevented overflow via `long long` |
+
+---
