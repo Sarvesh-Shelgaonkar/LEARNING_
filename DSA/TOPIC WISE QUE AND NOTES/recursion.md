@@ -2451,3 +2451,150 @@ $$
 * If a DP (memoized) recursion solves only **unique states once**, then **Time Complexity = number of unique states**.
 
 ---
+
+
+
+Here's a complete guide to solving **Sudoku using Backtracking in C++**, including:
+
+1. ✅ **Approach**
+2. 🧠 **Code**
+3. 🔄 **Call Stack Execution**
+4. 💡 **Mistakes to Avoid**
+5. ⏱️ **Time & Space Complexity**
+6. 📌 **Key Notes**
+
+---
+
+## ✅ 1. Sudoku Solver – Backtracking Approach
+
+### 🔹 Problem:
+
+You are given a partially filled 9×9 Sudoku board. Fill it completely such that:
+
+* Each **row**, **column**, and **3x3 box** has digits from **1 to 9**, **without repetition**.
+
+---
+
+## 🧠 2. Approach:
+
+1. Traverse the board **cell by cell**.
+2. When an **empty cell `'.'`** is found:
+
+   * Try placing digits `'1'` to `'9'`.
+   * For each digit, check if placing it is **valid** (no clash in row/col/box).
+   * If valid, place it and **recurse** for the next cell.
+   * If it fails later, **backtrack** by removing the digit and trying the next one.
+3. Continue until the entire board is filled.
+
+---
+
+## 🔢 3. C++ Code:
+
+```cpp
+class Solution {
+public:
+    bool isValid(vector<vector<char>>& board, int row, int col, char ch) {
+        for(int i = 0; i < 9; ++i) {
+            if(board[row][i] == ch) return false; // Row
+            if(board[i][col] == ch) return false; // Column
+            if(board[3*(row/3) + i/3][3*(col/3) + i%3] == ch) return false; // 3x3 box
+        }
+        return true;
+    }
+
+    bool solve(vector<vector<char>>& board) {
+        for(int row = 0; row < 9; ++row) {
+            for(int col = 0; col < 9; ++col) {
+                if(board[row][col] == '.') {
+                    for(char ch = '1'; ch <= '9'; ++ch) {
+                        if(isValid(board, row, col, ch)) {
+                            board[row][col] = ch;
+
+                            if(solve(board)) return true;
+
+                            board[row][col] = '.'; // backtrack
+                        }
+                    }
+                    return false; // No valid digit found
+                }
+            }
+        }
+        return true; // No empty cell left
+    }
+
+    void solveSudoku(vector<vector<char>>& board) {
+        solve(board);
+    }
+};
+```
+
+---
+
+## 🔄 4. Call Stack Execution (Example):
+
+Suppose we are at `board[0][2] = '.'`.
+
+1. Try placing `'1'`
+2. It’s valid → place and go deeper into recursion
+3. At some point, we reach a cell where no digit is valid → backtrack
+4. Undo `'1'` → try `'2'`
+5. Repeat until the whole board is filled or no solution exists
+
+### 🔁 Backtracking means:
+
+```txt
+Try → Go Deep → Fail? → Undo → Try Next → Repeat
+```
+
+---
+
+## ⚠️ 5. Common Mistakes You Might Do:
+
+| ❌ Mistake                                       | ✅ Correct                                  |
+| ----------------------------------------------- | ------------------------------------------ |
+| Not validating **3x3 box**                      | Use: `3*(row/3) + i/3, 3*(col/3) + i%3`    |
+| Missing **return false** after all digits tried | Ensure backtracking exits if no digit fits |
+| Using int instead of char `'1'` to `'9'`        | Use char type for board values             |
+| Returning from inside loop early                | Only return if placement successful        |
+
+---
+
+## ⏱️ 6. Time & Space Complexity
+
+### 🧮 Time Complexity (Worst Case):
+
+Each empty cell can try 9 digits.
+
+For **81 cells**:
+
+$$
+\boxed{O(9^{\text{empty cells}})}
+$$
+
+But thanks to pruning (via `isValid()`), it’s much faster in practice.
+
+### 🧠 Space Complexity:
+
+* **Recursive stack depth**: Up to 81 → `O(81)`
+* **No extra space used apart from board**.
+
+$$
+\boxed{O(1)} \quad \text{(board modified in-place)}
+$$
+
+---
+
+## 📌 Final Notes:
+
+* Use **backtracking** for any “fill the board/sequence” problem.
+* Always write a **validity check** before placing elements.
+* Understand and visualize the **call stack** and **backtrack path**.
+* Sudoku uses:
+
+  * Row checks
+  * Column checks
+  * 3x3 subgrid checks
+* Use `3*(row/3) + i/3` and `3*(col/3) + i%3` to access 3x3 boxes.
+
+---
+
