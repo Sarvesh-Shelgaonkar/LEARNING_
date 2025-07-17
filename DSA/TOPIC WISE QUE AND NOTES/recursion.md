@@ -2361,3 +2361,93 @@ int uniquePaths(int m, int n) {
 
 ---
 
+Let’s **break down clearly** how we calculate the **Time Complexity** of this function step by step:
+
+---
+
+### ✅ Function Recap:
+
+```cpp
+int dfs(int row, int col, int m, int n, vector<vector<int>>& dp) {
+    if(row == m-1 && col == n-1) return 1;
+    if(row >= m || col >= n) return 0;
+
+    if(dp[row][col] != -1) return dp[row][col];
+
+    return dp[row][col] = dfs(row+1, col, m, n, dp) + dfs(row, col+1, m, n, dp);
+}
+```
+
+---
+
+### 🧠 What Is Happening?
+
+This is a **top-down recursive function with memoization** that calculates the number of unique paths from the top-left to bottom-right of an `m x n` grid, moving only **right** or **down**.
+
+---
+
+### 🔁 Without Memoization
+
+If memoization (`dp`) was not used:
+
+* Every call makes **2 more calls** (down and right), forming a **binary recursion tree**.
+* Number of total calls = exponential (worst case: $2^{(m + n)}$) — **TLE**!
+
+---
+
+### ✅ With Memoization
+
+Because of memoization:
+
+* Every **(row, col)** pair is computed **only once**.
+* We **store** the result of each subproblem in `dp[row][col]` after first computation.
+* So next time we need the same value → we return **in constant time**.
+
+---
+
+### 🎯 Total Unique Calls = Number of Unique (row, col) States
+
+Since the grid is `m x n`, and we start at `(0, 0)` and move either:
+
+* **Down (row+1)** OR
+* **Right (col+1)**
+
+The **maximum number of unique (row, col)** pairs that we will ever compute is:
+
+$$
+\boxed{m \times n}
+$$
+
+---
+
+### 📌 Final Time Complexity:
+
+* Each of the $m \times n$ subproblems is computed only once.
+* Each call does **O(1)** work (some checks + 2 calls or memo return).
+
+So:
+
+$$
+\boxed{\text{Time Complexity} = \mathcal{O}(m \times n)}
+$$
+
+---
+
+### 📌 Final Space Complexity:
+
+* **DP Table**: `dp[m][n]` → $O(m \times n)$
+* **Call stack**: Depth up to $m + n$ → $O(m + n)$
+
+So total space:
+
+$$
+\boxed{\text{Space Complexity} = \mathcal{O}(m \times n)}
+$$
+
+---
+
+### ✅ Key Concept:
+
+* If a DP (memoized) recursion solves only **unique states once**, then **Time Complexity = number of unique states**.
+
+---
