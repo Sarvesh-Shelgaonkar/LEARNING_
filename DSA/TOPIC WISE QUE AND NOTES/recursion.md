@@ -2204,3 +2204,160 @@ vector<vector<string>> ans;
 * But each string = 1 row → so **visually and logically it's a 2D board**
 * You can still use `board[row][col]` syntax ✅
 
+
+
+Absolutely! Here's your **final handwritten-style notes** for the **Unique Paths problem**, including:
+
+---
+
+## 📘 **Unique Paths – Final Notes (Leetcode 62)**
+
+---
+
+### 🧩 **Problem Statement**
+
+> You are given a `m x n` grid.
+> Starting from top-left `(0,0)` to bottom-right `(m-1,n-1)`,
+> Count the number of **unique paths** to reach the destination.
+> You can **only move**:
+
+* ➡️ Right
+* ⬇️ Down
+
+---
+
+### ✅ **Example**
+
+For `m = 3`, `n = 2`:
+
+```
+Start: (0,0)       End: (2,1)
+
+Grid:
+[0,0] [0,1]
+[1,0] [1,1]
+[2,0] [2,1]
+
+Paths: 3
+→→↓↓
+→↓→↓
+↓→→
+```
+
+---
+
+### 💡 **Approach 1: Recursive (Brute Force)**
+
+#### 🔁 Recursive Logic
+
+From (row, col), move:
+
+* ⬇️ `dfs(row+1, col)`
+* ➡️ `dfs(row, col+1)`
+
+```cpp
+int dfs(int row, int col, int m, int n) {
+    if(row == m-1 && col == n-1) return 1; // Reached destination
+    if(row >= m || col >= n) return 0;     // Out of bounds
+
+    return dfs(row+1, col, m, n) + dfs(row, col+1, m, n);
+}
+```
+
+#### ⛔ Time: `O(2^(m+n))` — exponential
+
+No memoization = lots of repeated calls
+
+---
+
+### 🚫 **Your Mistakes** (Common Errors)
+
+| ❌ Wrong Code               | ✅ Correct Code                                  |            |               |   |             |
+| -------------------------- | ----------------------------------------------- | ---------- | ------------- | - | ----------- |
+| `if(row == m && col == n)` | `if(row == m-1 && col == n-1)`                  |            |               |   |             |
+| \`if(row > m               |                                                 | col > m)\` | \`if(row >= m |   | col >= n)\` |
+| Uninitialized `dp`         | `vector<vector<int>> dp(m, vector<int>(n, -1))` |            |               |   |             |
+
+---
+
+### ✅ **Approach 2: Top-down DP (Memoization)**
+
+Store results to avoid recomputation.
+
+```cpp
+int dfs(int row, int col, int m, int n, vector<vector<int>>& dp) {
+    if(row == m-1 && col == n-1) return 1;
+    if(row >= m || col >= n) return 0;
+
+    if(dp[row][col] != -1) return dp[row][col];
+
+    return dp[row][col] = dfs(row+1, col, m, n, dp) + dfs(row, col+1, m, n, dp);
+}
+```
+
+#### ✅ Full Driver Code:
+
+```cpp
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int>> dp(m, vector<int>(n, -1));
+        return dfs(0, 0, m, n, dp);
+    }
+};
+```
+
+#### 📈 Time: `O(m * n)`
+
+#### 📦 Space: `O(m * n)` (dp table + recursion stack)
+
+---
+
+### 📐 Call Stack Dry Run (`m=2, n=2`):
+
+```
+dfs(0,0)
+ ├── dfs(1,0)
+ │     ├── dfs(2,0) → 0
+ │     └── dfs(1,1) → 1
+ │     → 1
+ └── dfs(0,1)
+       ├── dfs(1,1) → 1
+       └── dfs(0,2) → 0
+       → 1
+
+Total = 1 + 1 = 2
+```
+
+---
+
+### ⚡ **Approach 3: Combinatorics (Most Efficient)**
+
+Number of steps = `m-1` downs + `n-1` rights = `m+n−2` total steps
+You choose `m-1` down moves:
+
+> `C(m+n−2, m−1) = (m+n−2)! / ((m−1)! * (n−1)!)`
+
+```cpp
+int uniquePaths(int m, int n) {
+    return comb(m+n-2, m-1); // OR comb(m+n-2, n-1)
+}
+```
+
+#### 🧠 Time: `O(min(m, n))`
+
+#### 🧮 Space: `O(1)` using iterative factorial
+
+---
+
+### ✅ Final Summary Table
+
+| Method        | Time        | Space    | Suitable For        |
+| ------------- | ----------- | -------- | ------------------- |
+| Recursion     | Exponential | O(m+n)   | Understanding logic |
+| DP (Memo)     | O(m × n)    | O(m × n) | Medium grids        |
+| Tabulation    | O(m × n)    | O(m × n) | Efficient & easy    |
+| Combinatorics | O(min(m,n)) | O(1)     | Very large grids    |
+
+---
+
