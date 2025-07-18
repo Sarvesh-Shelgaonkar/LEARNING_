@@ -1,16 +1,3 @@
-#include <iostream>
-using namespace std;
-
-class Node {
-public:
-    int data;
-    Node* next;
-    Node(int val) {
-        data = val;
-        next = nullptr;
-    }
-};
-
 class LinkedList {
 private:
     Node* head;
@@ -20,41 +7,43 @@ public:
         head = nullptr;
     }
 
-    // Push at front
-    void pushFront(int val) {
-        Node* newNode = new Node(val);
+    // 1. Push Front
+    void pushFront(int data) {
+        Node* newNode = new Node(data);
         newNode->next = head;
         head = newNode;
     }
+    // TC: O(1) - Always inserts at beginning
 
-    // Push at back
-    void pushBack(int val) {
-        Node* newNode = new Node(val);
+    // 2. Push Back
+    void pushBack(int data) {
+        Node* newNode = new Node(data);
         if (!head) {
             head = newNode;
             return;
         }
         Node* temp = head;
-        while (temp->next)
-            temp = temp->next;
+        while (temp->next) temp = temp->next;
         temp->next = newNode;
     }
+    // TC: O(n) - Traverses to the end
 
-    // Pop front
+    // 3. Pop Front
     void popFront() {
         if (!head) {
-            cout << "List is empty.\n";
+            cout << "List is empty\n";
             return;
         }
         Node* temp = head;
         head = head->next;
         delete temp;
     }
+    // TC: O(1)
 
-    // Pop back
+    // 4. Pop Back
     void popBack() {
         if (!head) {
-            cout << "List is empty.\n";
+            cout << "List is empty\n";
             return;
         }
         if (!head->next) {
@@ -63,42 +52,43 @@ public:
             return;
         }
         Node* temp = head;
-        while (temp->next->next)
-            temp = temp->next;
+        while (temp->next->next) temp = temp->next;
         delete temp->next;
         temp->next = nullptr;
     }
+    // TC: O(n)
 
-    // Insert at position (0-based)
-    void insertAt(int pos, int val) {
+    // 5. Insert At Position (0-based indexing)
+    void insertAtPosition(int data, int pos) {
         if (pos < 0) {
-            cout << "Invalid position.\n";
+            cout << "Invalid position\n";
             return;
         }
 
         if (pos == 0) {
-            pushFront(val);
+            pushFront(data);
             return;
         }
 
         Node* temp = head;
-        for (int i = 0; temp && i < pos - 1; i++)
+        for (int i = 0; i < pos - 1 && temp; i++)
             temp = temp->next;
 
         if (!temp) {
-            cout << "Position out of bounds.\n";
+            cout << "Position out of bounds\n";
             return;
         }
 
-        Node* newNode = new Node(val);
+        Node* newNode = new Node(data);
         newNode->next = temp->next;
         temp->next = newNode;
     }
+    // TC: O(pos) → Worst case O(n)
 
-    // Delete at position (0-based)
-    void deleteAt(int pos) {
+    // 6. Delete At Position (0-based indexing)
+    void deleteAtPosition(int pos) {
         if (!head || pos < 0) {
-            cout << "Invalid position or empty list.\n";
+            cout << "Invalid operation\n";
             return;
         }
 
@@ -108,36 +98,33 @@ public:
         }
 
         Node* temp = head;
-        for (int i = 0; temp->next && i < pos - 1; i++)
+        for (int i = 0; i < pos - 1 && temp; i++)
             temp = temp->next;
 
-        if (!temp->next) {
-            cout << "Position out of bounds.\n";
+        if (!temp || !temp->next) {
+            cout << "Position out of bounds\n";
             return;
         }
 
         Node* delNode = temp->next;
-        temp->next = delNode->next;
+        temp->next = temp->next->next;
         delete delNode;
     }
+    // TC: O(pos) → Worst case O(n)
 
-    // Search value
+    // 7. Search for value
     bool search(int key) {
         Node* temp = head;
         while (temp) {
-            if (temp->data == key)
-                return true;
+            if (temp->data == key) return true;
             temp = temp->next;
         }
         return false;
     }
+    // TC: O(n)
 
-    // Display list
-    void display() {
-        if (!head) {
-            cout << "List is empty.\n";
-            return;
-        }
+    // Utility: Print list
+    void print() {
         Node* temp = head;
         while (temp) {
             cout << temp->data << " -> ";
@@ -149,25 +136,22 @@ public:
 int main() {
     LinkedList list;
 
-    list.pushBack(10);
-    list.pushBack(20);
-    list.pushFront(5);
-    list.display(); // 5 -> 10 -> 20 -> NULL
+    list.pushFront(30);
+    list.pushFront(20);
+    list.pushBack(40);
+    list.insertAtPosition(25, 1); // Insert 25 at pos 1
 
-    list.insertAt(1, 7);
-    list.display(); // 5 -> 7 -> 10 -> 20 -> NULL
+    list.print(); // 20 -> 25 -> 30 -> 40 -> NULL
+
+    list.deleteAtPosition(2);
+    list.print(); // 20 -> 25 -> 40 -> NULL
 
     list.popFront();
-    list.display(); // 7 -> 10 -> 20 -> NULL
-
     list.popBack();
-    list.display(); // 7 -> 10 -> NULL
+    list.print(); // 25 -> NULL
 
-    list.deleteAt(1);
-    list.display(); // 7 -> NULL
-
-    cout << "Found 7? " << (list.search(7) ? "Yes" : "No") << endl;
-    cout << "Found 10? " << (list.search(10) ? "Yes" : "No") << endl;
+    cout << "Search 25: " << (list.search(25) ? "Found" : "Not Found") << endl;
+    cout << "Search 99: " << (list.search(99) ? "Found" : "Not Found") << endl;
 
     return 0;
 }
