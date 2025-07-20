@@ -698,3 +698,334 @@ while (temp != nullptr) {
 * Floyd's algorithm is preferred due to **space efficiency**.
 * Once a cycle is detected, counting nodes is straightforward by cycling through until pointer reaches the start again.
 
+
+
+
+
+
+
+
+
+
+
+Excellent question — you're noticing a subtle but important **difference between use cases** of `unordered_map` (or `map`) and **when comparing pointers (`ListNode*`) is valid vs when it's not**. Let’s break it down clearly:
+
+---
+
+### ✅ When comparing or storing `ListNode*` in a map **makes sense**
+
+#### 📌 Example: Detecting a loop or computing length of cycle
+
+In problems like:
+
+* Detecting cycle in a linked list (Floyd’s or using hashmap)
+* Finding length of a list by tracking visited nodes
+
+You **do** store nodes (`ListNode*`) as keys in a `map` or `unordered_map`:
+
+```cpp
+unordered_map<ListNode*, bool> visited;
+while (head != nullptr) {
+    if (visited[head]) return true; // Already seen this node
+    visited[head] = true;
+    head = head->next;
+}
+```
+
+✅ This works because we want to **track whether we've seen the *same node in memory***.
+
+---
+
+### ❌ But in palindrome check: we don't care about pointer identity
+
+In a **palindrome**, we only care whether the **values match in forward and reverse**, like:
+
+```
+1 → 2 → 3 → 2 → 1   (is a palindrome)
+```
+
+Here, the two `2`s or two `1`s are **different nodes in memory**, but have **same value**.
+
+So:
+
+```cpp
+st.top() == temp       // ❌ pointer comparison (wrong)
+st.top()->val == temp->val  // ✅ value comparison (correct)
+```
+
+If you stored node pointers in a `stack`, comparing them like:
+
+```cpp
+if (st.top() == temp)
+```
+
+is like asking:
+
+> “Is the first `2` in the list the exact same object as the last `2`?”
+
+That’s **false**, even though the values match.
+
+---
+
+### ⚠️ Why pointer comparison works in hashmap for loops, but not here:
+
+| Task                       | Compare Nodes (`ListNode*`) | Compare Values (`val`)        |
+| -------------------------- | --------------------------- | ----------------------------- |
+| Cycle Detection / Visited? | ✅ Yes — same memory         | ❌ No — values can repeat      |
+| Length by unique nodes     | ✅ Yes — avoid revisiting    | ❌ No — same value ≠ same node |
+| Palindrome Check           | ❌ No — different nodes      | ✅ Yes — values must match     |
+
+---
+
+### 🔁 Final Analogy
+
+Imagine a list like this:
+
+```
+Node A (val=2) → Node B (val=2)
+```
+
+Even though both have `val = 2`, `A != B` in memory:
+
+```cpp
+if (A == B) → false  ❌
+if (A->val == B->val) → true ✅
+```
+
+---
+
+### ✅ Summary:
+
+* You can **store `ListNode*` in maps/sets** when you care about the **actual node object** (like detecting cycles).
+* You must compare **values (`node->val`)** when solving problems like **palindromes**, where **value symmetry** matters — not identity.
+
+
+
+
+
+Here are clean, handwritten-style **notes for the question `oddEvenList`** (Leetcode 328) — rearranging a singly linked list such that all odd-indexed nodes come first, followed by all even-indexed nodes:
+
+---
+
+### ✅ **Problem Statement**
+
+Given a singly linked list, group all the **odd-indexed** nodes together followed by the **even-indexed** nodes.
+**1-based indexing**.
+
+---
+
+### 🧠 **Approach (In-place, O(1) space):**
+
+We maintain **two separate lists** during traversal:
+
+| Pointer    | Points to                                      |
+| ---------- | ---------------------------------------------- |
+| `oddtemp`  | Last node of the odd list                      |
+| `eventemp` | Last node of the even list                     |
+| `head`     | First node of the full list                    |
+| `test`     | Stores start of even list for final connection |
+
+We alternate pointers to build two separate chains:
+
+* `odd → odd → odd`
+* `even → even → even`
+
+Finally, connect the last odd node to the first even node.
+
+---
+
+### 🔁 **Loop Condition:**
+
+```cpp
+while (eventemp && eventemp->next)
+```
+
+To avoid heap error:
+
+* `eventemp->next` must not be accessed when `eventemp == nullptr`
+
+---
+
+### 🔍 **Dry Run Example:**
+
+```txt
+Input: 1 → 2 → 3 → 4 → 5 → NULL
+Odd list:   1 → 3 → 5
+Even list:    2 → 4
+Final: 1 → 3 → 5 → 2 → 4 → NULL
+```
+
+---
+
+### ✨ **Code (Final):**
+
+```cpp
+class Solution {
+public:
+    ListNode* oddEvenList(ListNode* head) {
+        if (!head || !head->next) return head;
+
+        ListNode* oddtemp = head;
+        ListNode* eventemp = head->next;
+        ListNode* test = head->next; // start of even list
+
+        while (eventemp && eventemp->next) {
+            oddtemp->next = eventemp->next;
+            oddtemp = oddtemp->next;
+
+            eventemp->next = oddtemp->next;
+            eventemp = eventemp->next;
+        }
+
+        oddtemp->next = test;
+        return head;
+    }
+};
+```
+
+---
+
+### 🕒 **Time and Space Complexity:**
+
+* **Time:** O(n) → One full pass
+* **Space:** O(1) → In-place rearrangement
+
+---
+
+### 💡 Important Concepts:
+
+* Always **check `ptr && ptr->next`** before pointer jumps
+* Use **extra pointer** (`test`) to remember even list start
+* Move two pointers alternately (odd then even)
+
+---
+
+
+
+Yes! You are exactly right.
+For the problem **“Sort a linked list of 0s, 1s, and 2s”**, here are the two approaches you mentioned:
+
+---
+
+### ✅ **Brute Force Approach: Count and Overwrite**
+
+**Idea:** Count number of 0s, 1s, and 2s in the list, then update node values accordingly.
+
+#### Steps:
+
+1. Traverse and count: `cnt0`, `cnt1`, `cnt2`
+2. Traverse again and overwrite:
+
+   * First `cnt0` nodes as 0
+   * Then `cnt1` nodes as 1
+   * Then `cnt2` nodes as 2
+
+#### Code (Brute Force):
+
+```cpp
+void sortList(ListNode* head) {
+    int count[3] = {0};
+
+    ListNode* temp = head;
+    while (temp != NULL) {
+        count[temp->val]++;
+        temp = temp->next;
+    }
+
+    temp = head;
+    int i = 0;
+    while (temp != NULL) {
+        if (count[i] == 0) i++;
+        else {
+            temp->val = i;
+            count[i]--;
+            temp = temp->next;
+        }
+    }
+}
+```
+
+#### ✅ Time: O(n), Space: O(1)
+
+But **you modify values**, which may not be allowed in some cases.
+
+---
+
+### ✅ **Optimal Approach: Create 3 Dummy Lists (0s, 1s, 2s)**
+
+**Idea:** Don't change values. Instead, create three new lists for 0s, 1s, and 2s using dummy nodes, then link them together.
+
+#### Steps:
+
+1. Create dummy heads for 0, 1, and 2.
+2. Traverse original list, attach nodes to respective lists.
+3. Merge the three lists.
+4. Return the new head.
+
+#### Code (Optimal - No value change):
+
+```cpp
+ListNode* sortList(ListNode* head) {
+    if (!head || !head->next) return head;
+
+    // Dummy nodes
+    ListNode *zeroDummy = new ListNode(-1);
+    ListNode *oneDummy = new ListNode(-1);
+    ListNode *twoDummy = new ListNode(-1);
+
+    ListNode *zero = zeroDummy, *one = oneDummy, *two = twoDummy;
+
+    // Distribute nodes
+    ListNode* curr = head;
+    while (curr) {
+        if (curr->val == 0) {
+            zero->next = curr;
+            zero = zero->next;
+        }
+        else if (curr->val == 1) {
+            one->next = curr;
+            one = one->next;
+        }
+        else {
+            two->next = curr;
+            two = two->next;
+        }
+        curr = curr->next;
+    }
+
+    // Connect lists
+    zero->next = oneDummy->next ? oneDummy->next : twoDummy->next;
+    one->next = twoDummy->next;
+    two->next = NULL;
+
+    // Final head
+    ListNode* newHead = zeroDummy->next;
+
+    // Free dummy nodes
+    delete zeroDummy;
+    delete oneDummy;
+    delete twoDummy;
+
+    return newHead;
+}
+```
+
+---
+
+### ✅ Time: O(n)
+
+### ✅ Space: O(1) (ignoring dummy nodes)
+
+### ✅ No value modification
+
+---
+
+### Summary Table:
+
+| Approach          | Value Modified | Extra Space | Time | Notes                             |
+| ----------------- | -------------- | ----------- | ---- | --------------------------------- |
+| Count & Overwrite | Yes ✅          | O(1)        | O(n) | Easy, but changes data            |
+| Dummy Node Lists  | No ❌           | O(1)        | O(n) | Best for preserving original data |
+
+---
+
