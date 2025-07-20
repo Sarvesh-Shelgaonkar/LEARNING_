@@ -1029,3 +1029,209 @@ ListNode* sortList(ListNode* head) {
 
 ---
 
+
+
+
+Here's a **simple and clean C++ code** to **merge two sorted linked lists**:
+
+---
+
+### ✅ Optimal Approach (Iterative)
+
+```cpp
+ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+    ListNode dummy(0);              // Dummy head node
+    ListNode* tail = &dummy;
+
+    while (list1 && list2) {
+        if (list1->val < list2->val) {
+            tail->next = list1;
+            list1 = list1->next;
+        } else {
+            tail->next = list2;
+            list2 = list2->next;
+        }
+        tail = tail->next;
+    }
+
+    // Attach the remaining list
+    if (list1) tail->next = list1;
+    if (list2) tail->next = list2;
+
+    return dummy.next;
+}
+```
+
+---
+
+### 🔁 Recursive Version (Optional)
+
+```cpp
+ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+    if (!list1) return list2;
+    if (!list2) return list1;
+
+    if (list1->val < list2->val) {
+        list1->next = mergeTwoLists(list1->next, list2);
+        return list1;
+    } else {
+        list2->next = mergeTwoLists(list1, list2->next);
+        return list2;
+    }
+}
+```
+
+---
+
+
+Here's the **C++ code to copy a linked list with random pointer using an `unordered_map`** (brute force but intuitive):
+
+---
+
+### ✅ Approach: Using `unordered_map`
+
+We use a hash map to store the mapping from original nodes → cloned nodes.
+
+---
+
+### ✅ Code:
+
+```cpp
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+
+    Node(int _val) {
+        val = _val;
+        next = nullptr;
+        random = nullptr;
+    }
+};
+
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        if (!head) return NULL;
+
+        unordered_map<Node*, Node*> mp;
+
+        // Step 1: Create clone nodes and store mapping
+        Node* temp = head;
+        while (temp) {
+            mp[temp] = new Node(temp->val);
+            temp = temp->next;
+        }
+
+        // Step 2: Assign next and random pointers using the map
+        temp = head;
+        while (temp) {
+            mp[temp]->next = mp[temp->next];      // clone next
+            mp[temp]->random = mp[temp->random];  // clone random
+            temp = temp->next;
+        }
+
+        return mp[head];
+    }
+};
+```
+
+---
+
+### 🧠 Time & Space Complexity:
+
+* **Time:** `O(N)` – two passes over the list.
+* **Space:** `O(N)` – map stores N mappings.
+
+---
+Here’s a **clean and optimal C++ code** for **Copy List with Random Pointer**:
+
+---
+
+### ✅ Problem:
+
+Each node has:
+
+* `next` pointer to the next node,
+* `random` pointer to any node (or NULL).
+
+You need to **create a deep copy** of the list.
+
+---
+
+### 💡 Optimal Approach (O(N) time, O(1) space):
+
+**3 Steps:**
+
+1. **Clone and insert copy nodes** in between original nodes.
+2. **Set random pointers** of copied nodes.
+3. **Split the combined list** into original and copied.
+
+---
+
+### ✅ Code:
+
+```cpp
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+
+    Node(int _val) {
+        val = _val;
+        next = nullptr;
+        random = nullptr;
+    }
+};
+
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        if (!head) return NULL;
+
+        // Step 1: Clone nodes and insert after original
+        Node* temp = head;
+        while (temp) {
+            Node* copy = new Node(temp->val);
+            copy->next = temp->next;
+            temp->next = copy;
+            temp = copy->next;
+        }
+
+        // Step 2: Set random pointers for copy nodes
+        temp = head;
+        while (temp) {
+            if (temp->random)
+                temp->next->random = temp->random->next;
+            temp = temp->next->next;
+        }
+
+        // Step 3: Separate the original and copied list
+        temp = head;
+        Node* newHead = head->next;
+        Node* copy = newHead;
+
+        while (temp) {
+            temp->next = temp->next->next;
+            if (copy->next)
+                copy->next = copy->next->next;
+            temp = temp->next;
+            copy = copy->next;
+        }
+
+        return newHead;
+    }
+};
+```
+
+---
+
+### 🧠 Time & Space Complexity:
+
+* **Time:** `O(N)` – each node visited a few times.
+* **Space:** `O(1)` – no extra map used (in-place trick).
+
+---
+
