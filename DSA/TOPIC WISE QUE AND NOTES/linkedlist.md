@@ -4587,3 +4587,690 @@ Detecting the right pattern is crucial for solving linked list problems both qui
 **Spotting these cues in problem statements quickly guides you to the right solving pattern for linked list problems, ensuring efficiency and correctness.**
 
 [1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/64901923/cacfdc9f-d154-4f0d-bffb-276d1678a8c7/linkedlist.md
+
+
+
+
+
+## Linked List Problem Patterns with Brute Force and Optimal C++ Code
+
+Below, all classic linked list problems are grouped by *pattern*. Each includes both the brute force and optimal C++ solutions.
+
+### 1. **Pointer Manipulation**
+
+#### a. Reverse Linked List
+
+**Brute Force:** (Copy values, reverse array, assign back)
+
+```cpp
+ListNode* reverseList(ListNode* head) {
+    vector vals;
+    for (ListNode* curr = head; curr; curr = curr->next) vals.push_back(curr->val);
+    for (ListNode* curr = head; curr; curr = curr->next) {
+        curr->val = vals.back();
+        vals.pop_back();
+    }
+    return head;
+}
+```
+
+**Optimal:** (Pointer reversal, iterative)
+
+```cpp
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    while (head) {
+        ListNode* nextNode = head->next;
+        head->next = prev;
+        prev = head;
+        head = nextNode;
+    }
+    return prev;
+}
+```
+
+### 2. **Two-Pointer Technique**
+
+#### a. Find Middle of Linked List
+
+**Brute Force:**
+
+```cpp
+ListNode* middleNode(ListNode* head) {
+    int count = 0;
+    ListNode* temp = head;
+    while (temp) { ++count; temp = temp->next; }
+    temp = head;
+    for (int i = 0; i next;
+    return temp;
+}
+```
+
+**Optimal:** (Tortoise-Hare)
+
+```cpp
+ListNode* middleNode(ListNode* head) {
+    ListNode* slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+```
+
+#### b. Detect Cycle in Linked List
+
+**Brute Force:** (Using set)
+
+```cpp
+bool hasCycle(ListNode* head) {
+    unordered_set seen;
+    while (head) {
+        if (seen.count(head)) return true;
+        seen.insert(head);
+        head = head->next;
+    }
+    return false;
+}
+```
+
+**Optimal:** (Floyd’s, Tortoise-Hare)
+
+```cpp
+bool hasCycle(ListNode* head) {
+    ListNode* slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+```
+
+#### c. Remove Nth Node from End
+
+**Brute Force:**
+
+```cpp
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+    int len = 0;
+    ListNode* temp = head;
+    while (temp) { len++; temp = temp->next; }
+    if (len == n) return head->next;
+    temp = head;
+    for (int i = 1; i next;
+    temp->next = temp->next->next;
+    return head;
+}
+```
+
+**Optimal:** (Two-pointer technique)
+
+```cpp
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode dummy(0); dummy.next = head;
+    ListNode *fast = &dummy, *slow = &dummy;
+    for (int i = 0; i next;
+    while (fast->next) {
+        fast = fast->next; slow = slow->next;
+    }
+    slow->next = slow->next->next;
+    return dummy.next;
+}
+```
+
+#### d. Delete Middle Node
+
+**Brute Force:**
+
+```cpp
+ListNode* deleteMiddle(ListNode* head) {
+    if (!head || !head->next) return nullptr;
+    int len = 0;
+    ListNode* temp = head;
+    while (temp) { ++len; temp = temp->next; }
+    int mid = len / 2;
+    temp = head;
+    for (int i = 1; i next;
+    temp->next = temp->next->next;
+    return head;
+}
+```
+
+**Optimal:**
+
+```cpp
+ListNode* deleteMiddle(ListNode* head) {
+    if (!head || !head->next) return nullptr;
+    ListNode *slow = head, *fast = head, *prev = nullptr;
+    while (fast && fast->next) {
+        prev = slow; slow = slow->next; fast = fast->next->next;
+    }
+    prev->next = slow->next;
+    return head;
+}
+```
+
+### 3. **Dummy Node / Partitioning**
+
+#### a. Sort Linked List of 0s, 1s, 2s
+
+**Brute Force:** (Value count and overwrite)
+
+```cpp
+void sortList(ListNode* head) {
+    int count[3] = {0};
+    ListNode* temp = head;
+    while (temp) { count[temp->val]++; temp = temp->next; }
+    temp = head; int i = 0;
+    while (temp) {
+        if (count[i] == 0) ++i;
+        else { temp->val = i; --count[i]; temp = temp->next; }
+    }
+}
+```
+
+**Optimal:** (Dummy node buckets)
+
+```cpp
+ListNode* sortList(ListNode* head) {
+    ListNode zeroDummy(0), oneDummy(0), twoDummy(0);
+    ListNode *zero = &zeroDummy, *one = &oneDummy, *two = &twoDummy;
+    while (head) {
+        if (head->val == 0) zero->next = head, zero = zero->next;
+        else if (head->val == 1) one->next = head, one = one->next;
+        else two->next = head, two = two->next;
+        head = head->next;
+    }
+    zero->next = oneDummy.next ? oneDummy.next : twoDummy.next;
+    one->next = twoDummy.next;
+    two->next = nullptr;
+    return zeroDummy.next;
+}
+```
+
+#### b. Merge Two Sorted Linked Lists
+
+**Brute Force:** (Collect all, sort, rebuild)
+
+```cpp
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+    vector vals;
+    for (ListNode* t = l1; t; t = t->next) vals.push_back(t->val);
+    for (ListNode* t = l2; t; t = t->next) vals.push_back(t->val);
+    sort(vals.begin(), vals.end());
+    ListNode dummy(0), *cur = &dummy;
+    for (int v : vals) { cur->next = new ListNode(v); cur = cur->next; }
+    return dummy.next;
+}
+```
+
+**Optimal:** (Iterative merge)
+
+```cpp
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+    ListNode dummy(0), *cur = &dummy;
+    while (l1 && l2) {
+        if (l1->val val) { cur->next = l1; l1 = l1->next; }
+        else { cur->next = l2; l2 = l2->next; }
+        cur = cur->next;
+    }
+    cur->next = (l1) ? l1 : l2;
+    return dummy.next;
+}
+```
+
+### 4. **Hashing / Extra Space**
+
+#### a. Copy List with Random Pointer
+
+**Brute Force:** (unordered_map node mapping)
+
+```cpp
+Node* copyRandomList(Node* head) {
+    if (!head) return nullptr;
+    unordered_map mp;
+    Node* temp = head;
+    while (temp) { mp[temp] = new Node(temp->val); temp = temp->next; }
+    temp = head;
+    while (temp) {
+        mp[temp]->next = mp[temp->next];
+        mp[temp]->random = mp[temp->random];
+        temp = temp->next;
+    }
+    return mp[head];
+}
+```
+
+**Optimal:** (Interleaving O(1) space)
+
+```cpp
+Node* copyRandomList(Node* head) {
+    if (!head) return nullptr;
+    Node* temp = head;
+    while (temp) { // Clone nodes interleaved with original
+        Node* copy = new Node(temp->val);
+        copy->next = temp->next;
+        temp->next = copy;
+        temp = copy->next;
+    }
+    temp = head;
+    while (temp) { // Set random pointers
+        if (temp->random) temp->next->random = temp->random->next;
+        temp = temp->next->next;
+    }
+    Node* newHead = head->next, *copy = newHead;
+    temp = head;
+    while (temp) { // Separate lists
+        temp->next = temp->next->next;
+        if (copy->next) copy->next = copy->next->next;
+        temp = temp->next;
+        copy = copy->next;
+    }
+    return newHead;
+}
+```
+
+#### b. Detect Cycle Length
+
+**Brute Force:** (unordered_map for positions)
+
+```cpp
+int countNodesinLoop(ListNode* head) {
+    unordered_map mp;
+    ListNode* temp = head; int idx = 1;
+    while (temp) {
+        if (mp.count(temp)) return idx - mp[temp];
+        mp[temp] = idx++;
+        temp = temp->next;
+    }
+    return 0;
+}
+```
+
+**Optimal:** (Floyd’s, measure after cycle found)
+
+```cpp
+int countNodesinLoop(ListNode* head) {
+    ListNode* slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next, fast = fast->next->next;
+        if (slow == fast) {
+            int cnt = 1; ListNode* temp = slow->next;
+            while (temp != slow) { ++cnt; temp = temp->next; }
+            return cnt;
+        }
+    }
+    return 0;
+}
+```
+
+### 5. **Counting/Stack/Array Storage**
+
+#### a. Check if Linked List is Palindrome
+
+**Brute Force:** (store values in stack)
+
+```cpp
+bool isPalindrome(ListNode* head) {
+    stack st;
+    ListNode* temp = head;
+    while (temp) { st.push(temp->val); temp = temp->next; }
+    temp = head;
+    while (temp) {
+        if (temp->val != st.top()) return false;
+        st.pop(); temp = temp->next;
+    }
+    return true;
+}
+```
+
+**Optimal:** (Reverse second half, compare halves)
+
+```cpp
+ListNode* reverse(ListNode* head) {
+    ListNode* prev = nullptr;
+    while (head) {
+        ListNode* next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+bool isPalindrome(ListNode* head) {
+    if (!head || !head->next) return true;
+    ListNode *slow = head, *fast = head;
+    while (fast->next && fast->next->next) {
+        slow = slow->next; fast = fast->next->next;
+    }
+    ListNode* secondHalf = reverse(slow->next);
+    ListNode *firstHalf = head, *temp = secondHalf;
+    bool res = true;
+    while (temp) {
+        if (firstHalf->val != temp->val) { res = false; break; }
+        firstHalf = firstHalf->next; temp = temp->next;
+    }
+    slow->next = reverse(secondHalf);
+    return res;
+}
+```
+
+#### b. Odd-Even Linked List (Rearrange by Index)
+
+**Brute Force:** (Separate arrays, rebuild)
+
+```cpp
+ListNode* oddEvenList(ListNode* head) {
+    vector odds, evens;
+    int idx = 1; ListNode* temp = head;
+    while (temp) {
+        (idx % 2 ? odds : evens).push_back(temp);
+        temp = temp->next; ++idx;
+    }
+    ListNode* dummy = new ListNode(0), *curr = dummy;
+    for (auto node : odds) curr->next = node, curr = curr->next;
+    for (auto node : evens) curr->next = node, curr = curr->next;
+    curr->next = nullptr;
+    return dummy->next;
+}
+```
+
+**Optimal:** (Two pointers, in-place)
+
+```cpp
+ListNode* oddEvenList(ListNode* head) {
+    if (!head || !head->next) return head;
+    ListNode* odd = head, *even = head->next, *evenHead = even;
+    while (even && even->next) {
+        odd->next = even->next; odd = odd->next;
+        even->next = odd->next; even = even->next;
+    }
+    odd->next = evenHead;
+    return head;
+}
+```
+
+### 6. **Divide and Conquer: Sorting Linked List**
+
+#### a. Sort Linked List (Merge Sort)
+
+**Brute Force:** (Copy to array, sort, reassign)
+
+```cpp
+ListNode* sortList(ListNode* head) {
+    vector vals;
+    for (ListNode* temp = head; temp; temp = temp->next) vals.push_back(temp->val);
+    sort(vals.begin(), vals.end());
+    ListNode* temp = head;
+    for (int v : vals) { temp->val = v; temp = temp->next; }
+    return head;
+}
+```
+
+**Optimal:** (Merge sort using pointers)
+
+```cpp
+ListNode* merge(ListNode* l1, ListNode* l2) {
+    ListNode dummy(0), *tail = &dummy;
+    while (l1 && l2) {
+        if (l1->val val) { tail->next = l1; l1 = l1->next; }
+        else { tail->next = l2; l2 = l2->next; }
+        tail = tail->next;
+    }
+    tail->next = l1 ? l1 : l2;
+    return dummy.next;
+}
+ListNode* sortList(ListNode* head) {
+    if (!head || !head->next) return head;
+    ListNode *slow = head, *fast = head->next;
+    while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }
+    ListNode* mid = slow->next; slow->next = nullptr;
+    ListNode* left = sortList(head);
+    ListNode* right = sortList(mid);
+    return merge(left, right);
+}
+```
+
+### 7. **Special Techniques**
+
+#### a. Find Intersection Point of Y-Shaped Linked Lists
+
+**Brute Force:** (Compare each A to all B)
+
+```cpp
+ListNode* getIntersectionNode(ListNode* headA, ListNode* headB) {
+    for (ListNode* a = headA; a; a = a->next)
+        for (ListNode* b = headB; b; b = b->next)
+            if (a == b) return a;
+    return nullptr;
+}
+```
+
+**Optimal:** (Length alignment, traverse together)
+
+```cpp
+int getLen(ListNode* head) {
+    int len = 0; while (head) { ++len; head = head->next; } return len;
+}
+ListNode* getIntersectionNode(ListNode* headA, ListNode* headB) {
+    int lenA = getLen(headA), lenB = getLen(headB);
+    while (lenA > lenB) { headA = headA->next; --lenA; }
+    while (lenB > lenA) { headB = headB->next; --lenB; }
+    while (headA && headB) {
+        if (headA == headB) return headA;
+        headA = headA->next; headB = headB->next;
+    }
+    return nullptr;
+}
+```
+
+#### b. Add 1 to Number Represented by LL
+
+**Brute Force:** (Convert to int, add, rebuild)
+
+```cpp
+ListNode* addOne(ListNode* head) {
+    int num = 0;
+    for (ListNode* temp = head; temp; temp = temp->next) num = num * 10 + temp->val;
+    num += 1;
+    vector digits;
+    while (num) { digits.push_back(num % 10); num /= 10; }
+    ListNode* newHead = new ListNode(0), *curr = newHead;
+    for (int i = digits.size() - 1; i >= 0; --i) { curr->next = new ListNode(digits[i]); curr = curr->next; }
+    return newHead->next;
+}
+```
+
+**Optimal:** (Reverse, add, reverse back)
+
+```cpp
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    while (head) {
+        ListNode* next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+ListNode* addOne(ListNode* head) {
+    head = reverseList(head);
+    ListNode* temp = head;
+    int carry = 1;
+    while (temp) {
+        int sum = temp->val + carry;
+        temp->val = sum % 10;
+        carry = sum / 10;
+        if (!temp->next && carry) {
+            temp->next = new ListNode(carry);
+            carry = 0;
+        }
+        temp = temp->next;
+    }
+    return reverseList(head);
+}
+```
+
+#### c. Add Two Numbers Represented by LL
+
+**Brute Force:** (Convert both lists to integers, add, rebuild)
+
+```cpp
+int getNum(ListNode* head) {
+    int num = 0;
+    while (head) num = num * 10 + head->val, head = head->next;
+    return num;
+}
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    int num1 = getNum(l1), num2 = getNum(l2), sum = num1 + num2;
+    vector digits;
+    while (sum) { digits.push_back(sum % 10); sum /= 10; }
+    ListNode* dummy = new ListNode(0), *curr = dummy;
+    for (int i = digits.size() - 1; i >= 0; --i) { curr->next = new ListNode(digits[i]); curr = curr->next; }
+    return dummy->next;
+}
+```
+
+**Optimal:** (Traverse parallel, sum digits, manage carry)
+
+```cpp
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    ListNode dummy(0), *temp = &dummy;
+    int carry = 0;
+    while (l1 || l2 || carry) {
+        int sum = carry;
+        if (l1) sum += l1->val, l1 = l1->next;
+        if (l2) sum += l2->val, l2 = l2->next;
+        carry = sum / 10;
+        temp->next = new ListNode(sum % 10);
+        temp = temp->next;
+    }
+    return dummy.next;
+}
+```
+## Common Problem Patterns in Linked List Operations
+
+Linked list questions often follow recognizable patterns. Identifying these allows you to choose effective brute force and optimal solutions. Here is a structured guide to the most common patterns and their associated solutions:
+
+### 1. Pointer Manipulation
+
+**Applicable Problems:**  
+- Reverse Linked List  
+- Odd-Even Linked List  
+- Merge Two Sorted Lists  
+- Insert/Delete at Position
+
+**Solution Pattern:**  
+Directly manipulate the `next` pointers to change the structure of the list.  
+- *Optimal Solution:* In-place updates, usually O(1) space.
+- *Example*: Reverse pointers iteratively or recursively.
+
+### 2. Two-Pointer Technique (Tortoise-Hare)
+
+**Applicable Problems:**  
+- Find Middle Node  
+- Detect Cycle  
+- Remove Nth Node from End  
+- Delete Middle Node  
+- Check for Palindrome
+
+**Solution Pattern:**  
+Use two pointers moving at different speeds.  
+- *Optimal Solution:* Single traversal, O(1) extra space.
+- *Example*: Move one pointer twice as fast as the other to detect cycles or find the list's middle.
+
+### 3. Dummy Node Usage
+
+**Applicable Problems:**  
+- Merge Two Sorted Lists  
+- Sort 0-1-2 Linked List  
+- Remove Nth from End  
+- Insertion/Deletion Near Head
+
+**Solution Pattern:**  
+Create a dummy node as a new head or helper to simplify code and avoid special cases at the head.
+
+### 4. Hashing / Extra Space
+
+**Applicable Problems:**  
+- Detect Cycle (Brute Force)
+- Copy List with Random Pointer
+
+**Solution Pattern:**  
+Utilize a hash map or set to keep track of visited nodes or node mappings.  
+- *Brute Force Solution*: O(n) time and O(n) space; optimal alternatives often exist.
+
+### 5. Counting / Array Storage
+
+**Applicable Problems:**  
+- Sort LL of 0s, 1s, 2s (Brute Force)
+- Check for Palindrome (Brute Force)
+
+**Solution Pattern:**  
+Extract node values to an array or maintain counters, then process or rebuild the list from this intermediate storage.
+
+### 6. Divide and Conquer (Recursive Splitting)
+
+**Applicable Problems:**  
+- Sort Linked List (Merge Sort)
+- Find Intersection in Y-Shaped Lists
+
+**Solution Pattern:**  
+Split the list recursively, solve subproblems, and then merge.  
+- *Optimal Solution:* Merge sort on links for O(n log n) time.
+
+### 7. Reversal and Restoration
+
+**Applicable Problems:**  
+- Palindrome Check (Optimal)
+- Add 1 to Number
+- Add Two Numbers Represented by LL
+
+**Solution Pattern:**  
+Reverse the entire list or parts of it to simplify arithmetic or comparison. Restore the original order afterward if needed.
+
+### 8. Interleaving Nodes
+
+**Applicable Problems:**  
+- Deep Copy with Random Pointer
+
+**Solution Pattern:**  
+Insert copied nodes in-place between original nodes, set correct pointers, then split into the final structure.
+
+### Pattern-Problem Table
+
+| Pattern                   | Example Problems                          | Typical Optimal Solution             |
+|---------------------------|-------------------------------------------|--------------------------------------|
+| Pointer Manipulation      | Reverse, Odd-Even, Merge Sorted           | In-place update of `.next`           |
+| Two-Pointer Technique     | Find Middle, Cycle, Remove Nth, Palindrome| Slow & fast pointers                 |
+| Dummy Node Usage          | Merge, Remove Nth, Sort 0-1-2             | Dummy node to simplify head logic    |
+| Hashing / Extra Space     | Cycle detection, Copy with Random Pointer | Hash set or map for node addresses   |
+| Counting / Array Storage  | Sort 0-1-2, Palindrome (Brute Force)      | Count/stack/array for values         |
+| Divide and Conquer        | Sort Linked List, Intersection            | Recursive splitting & merging        |
+| Reversal and Restoration  | Palindrome, Addition problems             | Reverse portion(s) of list           |
+| Interleaving Nodes        | Copy with Random Pointer                  | Insert/adjust copy nodes in-place    |
+
+## Summary Table: Common Patterns & Solutions
+
+| Problem Type                           | Brute Force Approach                       | Optimal Solution Pattern                |
+|-----------------------------------------|--------------------------------------------|-----------------------------------------|
+| Reverse Linked List                     | Copy to array, reverse, overwrite          | Pointer manipulation (in-place)         |
+| Find Middle Node                        | Count nodes, access by index               | Two-pointer (Tortoise-Hare)             |
+| Detect Cycle                            | HashSet for visited nodes                  | Two-pointer (Floyd’s)                   |
+| Length of Loop                          | Map for node positions                     | Cycle count after detection             |
+| Odd-Even Linked List                    | Arrays for odd/even positions              | Rearrangement in-place by two pointers  |
+| Sort 0s, 1s, 2s                         | Counting & overwrite                       | Dummy node partition and re-link        |
+| Merge Two Sorted Lists                  | Array sort & rebuild                       | Dummy node iterative merge              |
+| Copy List with Random Pointer           | HashMap mapping nodes                      | Interleaving, set random, split lists   |
+| Check for Palindrome                    | Stack/array values, compare                | Reverse half, compare and restore       |
+| Remove Nth Node from End                | Count, then delete                         | Two-pointer gap method                  |
+| Delete Middle Node                      | Count and remove by index                  | Slow-fast, track previous, delete slow  |
+| Sort Linked List                        | Array sort & assign                        | Merge sort (divide and conquer)         |
+| Find Intersection in Y-shaped Lists     | Double traversal                           | Length align and simultaneous walk      |
+| Add 1/Add Two Numbers Represented by LL | Convert to int, add, rebuild               | Reverse, add with carry, reverse back   |
+
+By mastering these patterns, linked list problems become much more approachable, as most solutions fit into one of the above frameworks.
