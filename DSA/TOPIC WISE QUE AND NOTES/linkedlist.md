@@ -1235,3 +1235,1723 @@ public:
 
 ---
 
+
+
+Perfect! Here's the **summary** for the **“Check if Linked List is Palindrome”** question, covering both brute force (stack) and optimal approach:
+
+---
+
+## ✅ **Check if Linked List is a Palindrome**
+
+---
+
+### 🔹 **Brute Force Approach (Using Stack)**
+
+**Idea:** Store all elements in a stack, then iterate again and compare.
+
+#### 🔧 Steps:
+
+1. Traverse and push all values into a stack.
+2. Again traverse the list and pop from stack.
+3. If any mismatch, return `false`.
+
+#### 🧠 Code Snippet:
+
+```cpp
+bool isPalindrome(Node* head) {
+    stack<int> st;
+    Node* temp = head;
+    while (temp) {
+        st.push(temp->data);
+        temp = temp->next;
+    }
+    temp = head;
+    while (temp) {
+        if (st.top() != temp->data) return false;
+        st.pop();
+        temp = temp->next;
+    }
+    return true;
+}
+```
+
+#### 🕒 Time: O(N), 🔁 Space: O(N)
+
+---
+
+### 🔹 **Optimal Approach (Reverse Half and Compare)**
+
+**Idea:** Find middle, reverse second half, compare halves, then restore.
+
+#### 🔧 Steps:
+
+1. Use **slow and fast pointers** to find the middle.
+2. Reverse the **second half** of the list.
+3. Compare **first half and second half** node-by-node.
+4. If mismatch → return `false`.
+5. **Re-reverse** the second half to restore original list.
+
+#### 🧠 Code Snippet:
+
+```cpp
+Node* reverse(Node* head) {
+    Node* prev = NULL;
+    while (head) {
+        Node* next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+
+bool isPalindrome(Node* head) {
+    if (!head || !head->next) return true;
+    
+    // Find middle
+    Node *slow = head, *fast = head;
+    while (fast->next && fast->next->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    
+    // Reverse second half
+    Node* secondHalf = reverse(slow->next);
+    Node* firstHalf = head;
+    Node* temp = secondHalf;
+    
+    // Compare
+    while (temp) {
+        if (firstHalf->data != temp->data) return false;
+        firstHalf = firstHalf->next;
+        temp = temp->next;
+    }
+
+    // Restore
+    slow->next = reverse(secondHalf);
+    
+    return true;
+}
+```
+
+#### 🕒 Time: O(N), 🔁 Space: O(1)
+
+---
+
+### ✅ Summary:
+
+| Approach           | Time | Space | Extra Notes                |
+| ------------------ | ---- | ----- | -------------------------- |
+| Stack              | O(N) | O(N)  | Easy but not optimal       |
+| Reverse Half (opt) | O(N) | O(1)  | Recommended for interviews |
+
+---
+
+
+
+Here is a **complete summary** of all the **linked list questions** you mentioned, including:
+
+* Problem explanation
+* Brute Force (BF) approach + code
+* Optimal approach + code
+* Key points
+
+---
+
+### ✅ 1. **Remove Nth Node from the End of the LL**
+
+**📝 Problem**: Remove the Nth node from the end of the list.
+
+#### 💡 Brute Force:
+
+* Count total nodes.
+* Remove `(length - n + 1)`th node from start.
+
+```cpp
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+    int len = 0;
+    ListNode* temp = head;
+    while (temp) {
+        len++;
+        temp = temp->next;
+    }
+    if (len == n) return head->next;
+    temp = head;
+    for (int i = 1; i < len - n; i++) temp = temp->next;
+    temp->next = temp->next->next;
+    return head;
+}
+```
+
+#### ✅ Optimal (Two Pointer):
+
+* Use slow and fast pointer with gap of `n`.
+
+```cpp
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode dummy(0);
+    dummy.next = head;
+    ListNode* fast = &dummy;
+    ListNode* slow = &dummy;
+
+    for (int i = 0; i < n; i++) fast = fast->next;
+    while (fast->next) {
+        fast = fast->next;
+        slow = slow->next;
+    }
+    slow->next = slow->next->next;
+    return dummy.next;
+}
+```
+
+---
+
+### ✅ 2. **Delete the Middle Node of a LL**
+
+**📝 Problem**: Delete the middle node of the list.
+
+#### 💡 Brute Force:
+
+* Count nodes and delete the middle.
+
+```cpp
+ListNode* deleteMiddle(ListNode* head) {
+    if (!head || !head->next) return nullptr;
+    int len = 0;
+    ListNode* temp = head;
+    while (temp) { len++; temp = temp->next; }
+
+    int mid = len / 2;
+    temp = head;
+    for (int i = 1; i < mid; i++) temp = temp->next;
+    temp->next = temp->next->next;
+    return head;
+}
+```
+
+#### ✅ Optimal (Slow-Fast):
+
+* Use slow-fast pointer to find and delete middle.
+
+```cpp
+ListNode* deleteMiddle(ListNode* head) {
+    if (!head || !head->next) return nullptr;
+    ListNode* slow = head;
+    ListNode* fast = head;
+    ListNode* prev = nullptr;
+
+    while (fast && fast->next) {
+        prev = slow;
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    prev->next = slow->next;
+    return head;
+}
+```
+
+---
+
+### ✅ 3. **Sort LL**
+
+**📝 Problem**: Sort a linked list.
+
+#### 💡 Brute Force:
+
+* Copy to array → sort → reassign.
+
+#### ✅ Optimal:
+
+* Use **Merge Sort** for O(n log n).
+
+```cpp
+ListNode* merge(ListNode* l1, ListNode* l2) {
+    ListNode dummy(0), *tail = &dummy;
+    while (l1 && l2) {
+        if (l1->val < l2->val) { tail->next = l1; l1 = l1->next; }
+        else { tail->next = l2; l2 = l2->next; }
+        tail = tail->next;
+    }
+    tail->next = l1 ? l1 : l2;
+    return dummy.next;
+}
+
+ListNode* sortList(ListNode* head) {
+    if (!head || !head->next) return head;
+    ListNode* slow = head;
+    ListNode* fast = head->next;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    ListNode* mid = slow->next;
+    slow->next = nullptr;
+
+    ListNode* left = sortList(head);
+    ListNode* right = sortList(mid);
+    return merge(left, right);
+}
+```
+
+---
+
+### ✅ 4. **Sort LL of 0s, 1s, 2s (by links)**
+
+**📝 Problem**: Given a list with values 0, 1, 2 — sort it.
+
+#### 💡 Brute Force:
+
+* Count 0s, 1s, 2s → update nodes.
+
+```cpp
+void sortList012(ListNode* head) {
+    int cnt[3] = {0};
+    ListNode* temp = head;
+    while (temp) {
+        cnt[temp->val]++;
+        temp = temp->next;
+    }
+    temp = head;
+    int i = 0;
+    while (temp) {
+        if (cnt[i] == 0) i++;
+        else {
+            temp->val = i;
+            cnt[i]--;
+            temp = temp->next;
+        }
+    }
+}
+```
+
+#### ✅ Optimal:
+
+* Use 3 dummy lists for 0s, 1s, 2s and merge.
+
+```cpp
+ListNode* sortList(ListNode* head) {
+    ListNode zeroDummy(0), oneDummy(0), twoDummy(0);
+    ListNode *zero = &zeroDummy, *one = &oneDummy, *two = &twoDummy;
+
+    while (head) {
+        if (head->val == 0) zero->next = head, zero = zero->next;
+        else if (head->val == 1) one->next = head, one = one->next;
+        else two->next = head, two = two->next;
+        head = head->next;
+    }
+
+    zero->next = oneDummy.next ? oneDummy.next : twoDummy.next;
+    one->next = twoDummy.next;
+    two->next = nullptr;
+    return zeroDummy.next;
+}
+```
+
+---
+
+### ✅ 5. **Find Intersection Point of Y-shaped LL**
+
+**📝 Problem**: Find node where two LLs intersect.
+
+#### 💡 Brute Force:
+
+* Compare each node in list A to all nodes in list B — O(n²)
+
+#### ✅ Optimal:
+
+* Use difference in length technique.
+
+```cpp
+int getLength(ListNode* head) {
+    int len = 0;
+    while (head) { len++; head = head->next; }
+    return len;
+}
+
+ListNode* getIntersectionNode(ListNode* headA, ListNode* headB) {
+    int lenA = getLength(headA);
+    int lenB = getLength(headB);
+
+    while (lenA > lenB) { headA = headA->next; lenA--; }
+    while (lenB > lenA) { headB = headB->next; lenB--; }
+
+    while (headA && headB && headA != headB) {
+        headA = headA->next;
+        headB = headB->next;
+    }
+    return headA;
+}
+```
+
+---
+
+### ✅ 6. **Add 1 to a Number Represented by LL**
+
+**📝 Problem**: LL like `1->9->9` represents 199. Add 1 → 200.
+
+#### 💡 Brute Force:
+
+* Reverse LL → Add 1 → Reverse back.
+
+```cpp
+ListNode* reverse(ListNode* head) {
+    ListNode* prev = nullptr;
+    while (head) {
+        ListNode* next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+
+ListNode* addOne(ListNode* head) {
+    head = reverse(head);
+    ListNode* temp = head;
+    int carry = 1;
+
+    while (temp && carry) {
+        int sum = temp->val + carry;
+        temp->val = sum % 10;
+        carry = sum / 10;
+        if (!temp->next && carry) {
+            temp->next = new ListNode(carry);
+            carry = 0;
+        }
+        temp = temp->next;
+    }
+
+    return reverse(head);
+}
+```
+
+---
+
+### ✅ 7. **Add 2 Numbers Represented by LL**
+
+**📝 Problem**: Each LL represents a number (reverse order). Add both.
+
+#### 💡 Brute Force / Optimal: (same here)
+
+```cpp
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    ListNode dummy(0);
+    ListNode* temp = &dummy;
+    int carry = 0;
+
+    while (l1 || l2 || carry) {
+        int sum = carry;
+        if (l1) sum += l1->val, l1 = l1->next;
+        if (l2) sum += l2->val, l2 = l2->next;
+
+        carry = sum / 10;
+        temp->next = new ListNode(sum % 10);
+        temp = temp->next;
+    }
+    return dummy.next;
+}
+```
+
+---
+
+lavanyamahalle: i will ask u codin gmcs will u give me answers
+
+GitHub Copilot: Yes, I can help you with coding questions and provide answers. Please share your coding questions or problems, and I'll assist you.
+
+lavanyamahalle: can i give me summary of all ques in this
+
+GitHub Copilot: Here’s a concise summary of all the linked list questions and solutions covered in your notes:
+
+---
+
+### 1. **Basic Linked List Operations**
+- **Push Front/Back, Pop Front/Back, Insert/Delete at Position, Search, Print**
+- **Complexity:** Most are O(1) or O(n) depending on operation.
+
+---
+
+### 2. **Reverse Linked List**
+- **Recursive and Iterative approaches**
+- Reverse pointers one by one.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 3. **Find Middle of Linked List**
+- **Two-pass:** Count nodes, then go to middle.
+- **Optimal:** Use slow and fast pointers (Tortoise and Hare).
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 4. **Detect Cycle in Linked List**
+- **Brute Force:** Use a hash set to track visited nodes.
+- **Optimal:** Floyd’s Cycle Detection (Tortoise and Hare).
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 5. **Length of Loop in Linked List**
+- After detecting cycle, count nodes in the loop.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 6. **Odd-Even Linked List**
+- Rearrange nodes so all odd-indexed nodes come before even-indexed.
+- Use two pointers for odd/even chains.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 7. **Sort Linked List of 0s, 1s, 2s**
+- **Brute Force:** Count and overwrite values.
+- **Optimal:** Create three dummy lists for 0s, 1s, 2s and merge.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 8. **Merge Two Sorted Linked Lists**
+- **Iterative and Recursive solutions**
+- Merge nodes in sorted order.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 9. **Copy List with Random Pointer**
+- **Brute Force:** Use hash map to store original→copy mapping.
+- **Optimal:** Interleave copy nodes, set random pointers, then split.
+- **Complexity:** O(n) time, O(1) space (optimal).
+
+---
+
+If you want a summary for a specific question or code, let me know!
+
+lavanyamahalle: give me the sumarry of all que
+
+GitHub Copilot: Here’s a summary of all the major linked list questions and their approaches from your notes:
+
+---
+
+### 1. **Basic Linked List Operations**
+- Push/Pop Front & Back, Insert/Delete at Position, Search, Print.
+- **Time Complexity:** O(1) for front ops, O(n) for back/position ops.
+
+---
+
+### 2. **Reverse Linked List**
+- **Recursive & Iterative:** Reverse pointers.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 3. **Find Middle of Linked List**
+- **Two-pass:** Count nodes, go to middle.
+- **Optimal:** Slow/Fast pointers (Tortoise-Hare).
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 4. **Detect Cycle in Linked List**
+- **Brute Force:** Hash set for visited nodes.
+- **Optimal:** Floyd’s Cycle Detection (Tortoise-Hare).
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 5. **Length of Loop in Linked List**
+- Use Floyd’s algorithm, count nodes in loop.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 6. **Odd-Even Linked List**
+- Rearrange nodes: odd-indexed first, then even-indexed.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 7. **Sort Linked List of 0s, 1s, 2s**
+- **Brute Force:** Count and overwrite values.
+- **Optimal:** Dummy lists for 0s, 1s, 2s, then merge.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 8. **Merge Two Sorted Linked Lists**
+- **Iterative/Recursive:** Merge nodes in sorted order.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 9. **Copy List with Random Pointer**
+- **Brute Force:** Hash map for original→copy mapping.
+- **Optimal:** Interleave copy nodes, set random pointers, split.
+- **Time:** O(n), **Space:** O(1) (optimal).
+
+---
+
+### 10. **Check if Linked List is Palindrome**
+- **Brute Force:** Stack to compare values.
+- **Optimal:** Reverse second half, compare, restore.
+- **Time:** O(n), **Space:** O(1) (optimal).
+
+---
+
+### 11. **Remove Nth Node from End**
+- **Brute Force:** Count nodes, remove (length-n+1)th.
+- **Optimal:** Two pointers with gap n.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 12. **Delete Middle Node**
+- **Brute Force:** Count nodes, delete middle.
+- **Optimal:** Slow/Fast pointers, delete middle.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 13. **Sort Linked List**
+- **Optimal:** Merge Sort for O(n log n).
+- **Time:** O(n log n), **Space:** O(1).
+
+---
+
+### 14. **Find Intersection Point of Y-shaped LL**
+- **Optimal:** Align lengths, move together to find intersection.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 15. **Add 1 to Number Represented by LL**
+- Reverse, add 1, reverse back.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 16. **Add Two Numbers Represented by LL**
+- Traverse both, add digits, manage carry.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+lavanyamahalle: i will ask u codin gmcs will u give me answers
+
+GitHub Copilot: Yes, I can help you with coding questions and provide answers. Please share your coding questions or problems, and I'll assist you.
+
+lavanyamahalle: can i give me summary of all ques in this
+
+GitHub Copilot: Here’s a concise summary of all the linked list questions and solutions covered in your notes:
+
+---
+
+### 1. **Basic Linked List Operations**
+- **Push Front/Back, Pop Front/Back, Insert/Delete at Position, Search, Print**
+- **Complexity:** Most are O(1) or O(n) depending on operation.
+
+---
+
+### 2. **Reverse Linked List**
+- **Recursive and Iterative approaches**
+- Reverse pointers one by one.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 3. **Find Middle of Linked List**
+- **Two-pass:** Count nodes, then go to middle.
+- **Optimal:** Use slow and fast pointers (Tortoise and Hare).
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 4. **Detect Cycle in Linked List**
+- **Brute Force:** Use a hash set to track visited nodes.
+- **Optimal:** Floyd’s Cycle Detection (Tortoise and Hare).
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 5. **Length of Loop in Linked List**
+- After detecting cycle, count nodes in the loop.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 6. **Odd-Even Linked List**
+- Rearrange nodes so all odd-indexed nodes come before even-indexed.
+- Use two pointers for odd/even chains.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 7. **Sort Linked List of 0s, 1s, 2s**
+- **Brute Force:** Count and overwrite values.
+- **Optimal:** Create three dummy lists for 0s, 1s, 2s and merge.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 8. **Merge Two Sorted Linked Lists**
+- **Iterative and Recursive solutions**
+- Merge nodes in sorted order.
+- **Complexity:** O(n) time, O(1) space.
+
+---
+
+### 9. **Copy List with Random Pointer**
+- **Brute Force:** Use hash map to store original→copy mapping.
+- **Optimal:** Interleave copy nodes, set random pointers, then split.
+- **Complexity:** O(n) time, O(1) space (optimal).
+
+---
+
+If you want a summary for a specific question or code, let me know!
+
+lavanyamahalle: give me the sumarry of all que
+
+GitHub Copilot: Here’s a summary of all the major linked list questions and their approaches from your notes:
+
+---
+
+### 1. **Basic Linked List Operations**
+- Push/Pop Front & Back, Insert/Delete at Position, Search, Print.
+- **Time Complexity:** O(1) for front ops, O(n) for back/position ops.
+
+---
+
+### 2. **Reverse Linked List**
+- **Recursive & Iterative:** Reverse pointers.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 3. **Find Middle of Linked List**
+- **Two-pass:** Count nodes, go to middle.
+- **Optimal:** Slow/Fast pointers (Tortoise-Hare).
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 4. **Detect Cycle in Linked List**
+- **Brute Force:** Hash set for visited nodes.
+- **Optimal:** Floyd’s Cycle Detection (Tortoise-Hare).
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 5. **Length of Loop in Linked List**
+- Use Floyd’s algorithm, count nodes in loop.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 6. **Odd-Even Linked List**
+- Rearrange nodes: odd-indexed first, then even-indexed.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 7. **Sort Linked List of 0s, 1s, 2s**
+- **Brute Force:** Count and overwrite values.
+- **Optimal:** Dummy lists for 0s, 1s, 2s, then merge.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 8. **Merge Two Sorted Linked Lists**
+- **Iterative/Recursive:** Merge nodes in sorted order.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 9. **Copy List with Random Pointer**
+- **Brute Force:** Hash map for original→copy mapping.
+- **Optimal:** Interleave copy nodes, set random pointers, split.
+- **Time:** O(n), **Space:** O(1) (optimal).
+
+---
+
+### 10. **Check if Linked List is Palindrome**
+- **Brute Force:** Stack to compare values.
+- **Optimal:** Reverse second half, compare, restore.
+- **Time:** O(n), **Space:** O(1) (optimal).
+
+---
+
+### 11. **Remove Nth Node from End**
+- **Brute Force:** Count nodes, remove (length-n+1)th.
+- **Optimal:** Two pointers with gap n.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 12. **Delete Middle Node**
+- **Brute Force:** Count nodes, delete middle.
+- **Optimal:** Slow/Fast pointers, delete middle.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 13. **Sort Linked List**
+- **Optimal:** Merge Sort for O(n log n).
+- **Time:** O(n log n), **Space:** O(1).
+
+---
+
+### 14. **Find Intersection Point of Y-shaped LL**
+- **Optimal:** Align lengths, move together to find intersection.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 15. **Add 1 to Number Represented by LL**
+- Reverse, add 1, reverse back.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+### 16. **Add Two Numbers Represented by LL**
+- Traverse both, add digits, manage carry.
+- **Time:** O(n), **Space:** O(1).
+
+---
+
+If you want details or code for any specific question, let me know!
+
+lavanyamahalle: write ques together with similar pattern
+
+GitHub Copilot: Here’s a summary of all linked list questions from your notes, written in a similar pattern for easy revision:
+
+---
+
+### 1. **Basic Linked List Operations**
+- **Push/Pop Front & Back, Insert/Delete at Position, Search, Print**
+- *Time Complexity:* O(1) for front ops, O(n) for back/position ops
+
+---
+
+### 2. **Reverse Linked List**
+- **Reverse pointers (Recursive/Iterative)**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 3. **Find Middle of Linked List**
+- **Find middle using two-pass or slow/fast pointers**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 4. **Detect Cycle in Linked List**
+- **Detect cycle using hash set or Floyd’s Tortoise-Hare**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 5. **Length of Loop in Linked List**
+- **Count nodes in loop after cycle detection**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 6. **Odd-Even Linked List**
+- **Rearrange nodes: odd-indexed first, then even-indexed**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 7. **Sort Linked List of 0s, 1s, 2s**
+- **Sort using count & overwrite or dummy lists**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 8. **Merge Two Sorted Linked Lists**
+- **Merge nodes in sorted order (Iterative/Recursive)**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 9. **Copy List with Random Pointer**
+- **Deep copy using hash map or interleaving nodes**
+- *Time:* O(n), *Space:* O(1) (optimal)
+
+---
+
+### 10. **Check if Linked List is Palindrome**
+- **Check palindrome using stack or reverse second half**
+- *Time:* O(n), *Space:* O(1) (optimal)
+
+---
+
+### 11. **Remove Nth Node from End**
+- **Remove nth node using count or two pointers**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 12. **Delete Middle Node**
+- **Delete middle node using count or slow/fast pointers**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 13. **Sort Linked List**
+- **Sort using merge sort**
+- *Time:* O(n log n), *Space:* O(1)
+
+---
+
+### 14. **Find Intersection Point of Y-shaped LL**
+- **Find intersection by aligning lengths**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 15. **Add 1 to Number Represented by LL**
+- **Reverse, add 1, reverse back**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+### 16. **Add Two Numbers Represented by LL**
+- **Traverse both, add digits, manage carry**
+- *Time:* O(n), *Space:* O(1)
+
+---
+
+Let me know if you want code or explanation for any question!
+
+lavanyamahalle: give me brute f and optimal approaches for all these que in detail as same like in this file
+
+GitHub Copilot: Here’s a detailed summary of **brute force and optimal approaches** for all major linked list questions, following the same style as your notes:
+
+---
+
+### 1. **Reverse Linked List**
+
+**Brute Force:**  
+- Copy values to array, reverse array, reassign to nodes.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Reverse pointers in-place (iterative or recursive).  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 2. **Find Middle of Linked List**
+
+**Brute Force:**  
+- Count nodes, go to middle (`count/2`th node).  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Use slow and fast pointers (Tortoise-Hare).  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 3. **Detect Cycle in Linked List**
+
+**Brute Force:**  
+- Use hash set to store visited nodes, check for repeats.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Floyd’s Cycle Detection (slow/fast pointers).  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 4. **Length of Loop in Linked List**
+
+**Brute Force:**  
+- Use map to store node positions, detect revisit, calculate loop length.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- After cycle detected (Floyd’s), count nodes in loop by moving pointer until it meets again.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 5. **Odd-Even Linked List**
+
+**Brute Force:**  
+- Copy odd and even nodes to separate arrays, rebuild list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Use two pointers to build odd and even chains, connect at end.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 6. **Sort Linked List of 0s, 1s, 2s**
+
+**Brute Force:**  
+- Count 0s, 1s, 2s, overwrite node values.  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Create three dummy lists for 0s, 1s, 2s, merge them.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 7. **Merge Two Sorted Linked Lists**
+
+**Brute Force:**  
+- Copy all nodes to array, sort, rebuild list.  
+- **Time:** O(n log n), **Space:** O(n)
+
+**Optimal:**  
+- Merge nodes one by one (iterative or recursive).  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 8. **Copy List with Random Pointer**
+
+**Brute Force:**  
+- Use hash map to store original→copy mapping, set next/random pointers.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Interleave copy nodes, set random pointers, split lists.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 9. **Check if Linked List is Palindrome**
+
+**Brute Force:**  
+- Store values in stack, compare with original list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Reverse second half, compare halves, restore list.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 10. **Remove Nth Node from End**
+
+**Brute Force:**  
+- Count nodes, remove `(length-n+1)`th node.  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Use two pointers with gap n, remove node.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 11. **Delete Middle Node**
+
+**Brute Force:**  
+- Count nodes, delete middle.  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Use slow/fast pointers, delete middle.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 12. **Sort Linked List**
+
+**Brute Force:**  
+- Copy to array, sort, reassign.  
+- **Time:** O(n log n), **Space:** O(n)
+
+**Optimal:**  
+- Merge sort on linked list.  
+- **Time:** O(n log n), **Space:** O(1)
+
+---
+
+### 13. **Find Intersection Point of Y-shaped LL**
+
+**Brute Force:**  
+- Compare each node in list A to all nodes in list B.  
+- **Time:** O(n²), **Space:** O(1)
+
+**Optimal:**  
+- Align lengths, move together to find intersection.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 14. **Add 1 to Number Represented by LL**
+
+**Brute Force:**  
+- Convert to integer, add 1, rebuild list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Reverse, add 1, reverse back.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 15. **Add Two Numbers Represented by LL**
+
+**Brute Force:**  
+- Convert both to integers, add, rebuild list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Traverse both, add digits, manage carry.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+Let me know if you want code snippets for any specific approach!
+
+lavanyamahalle: give me brute f and optimal approaches for all these que in detail as same like in this file
+
+GitHub Copilot: Here are the brute force and optimal approaches for all major linked list questions, written in the same detailed style as your file:
+
+---
+
+### 1. Reverse Linked List
+
+**Brute Force:**  
+- Copy all node values to an array, reverse the array, reassign values to nodes.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal (In-place):**  
+- Reverse pointers using iterative or recursive method.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 2. Find Middle of Linked List
+
+**Brute Force:**  
+- Count total nodes, then go to the middle (`count/2`th node).  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Use slow and fast pointers (Tortoise-Hare).  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 3. Detect Cycle in Linked List
+
+**Brute Force:**  
+- Use a hash set to store visited nodes, return true if a node is revisited.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Floyd’s Cycle Detection (slow/fast pointers).  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 4. Length of Loop in Linked List
+
+**Brute Force:**  
+- Use a map to store node positions, detect revisit, calculate loop length.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- After cycle detected (Floyd’s), count nodes in loop by moving pointer until it meets again.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 5. Odd-Even Linked List
+
+**Brute Force:**  
+- Copy odd and even nodes to separate arrays, rebuild list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Use two pointers to build odd and even chains, connect at end.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 6. Sort Linked List of 0s, 1s, 2s
+
+**Brute Force:**  
+- Count 0s, 1s, 2s, overwrite node values.  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Create three dummy lists for 0s, 1s, 2s, merge them.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 7. Merge Two Sorted Linked Lists
+
+**Brute Force:**  
+- Copy all nodes to array, sort, rebuild list.  
+- **Time:** O(n log n), **Space:** O(n)
+
+**Optimal:**  
+- Merge nodes one by one (iterative or recursive).  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 8. Copy List with Random Pointer
+
+**Brute Force:**  
+- Use hash map to store original→copy mapping, set next/random pointers.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Interleave copy nodes, set random pointers, split lists.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 9. Check if Linked List is Palindrome
+
+**Brute Force:**  
+- Store values in stack, compare with original list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Reverse second half, compare halves, restore list.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 10. Remove Nth Node from End
+
+**Brute Force:**  
+- Count nodes, remove `(length-n+1)`th node.  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Use two pointers with gap n, remove node.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 11. Delete Middle Node
+
+**Brute Force:**  
+- Count nodes, delete middle.  
+- **Time:** O(n), **Space:** O(1)
+
+**Optimal:**  
+- Use slow/fast pointers, delete middle.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 12. Sort Linked List
+
+**Brute Force:**  
+- Copy to array, sort, reassign.  
+- **Time:** O(n log n), **Space:** O(n)
+
+**Optimal:**  
+- Merge sort on linked list.  
+- **Time:** O(n log n), **Space:** O(1)
+
+---
+
+### 13. Find Intersection Point of Y-shaped LL
+
+**Brute Force:**  
+- Compare each node in list A to all nodes in list B.  
+- **Time:** O(n²), **Space:** O(1)
+
+**Optimal:**  
+- Align lengths, move together to find intersection.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 14. Add 1 to Number Represented by LL
+
+**Brute Force:**  
+- Convert to integer, add 1, rebuild list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Reverse, add 1, reverse back.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+### 15. Add Two Numbers Represented by LL
+
+**Brute Force:**  
+- Convert both to integers, add, rebuild list.  
+- **Time:** O(n), **Space:** O(n)
+
+**Optimal:**  
+- Traverse both, add digits, manage carry.  
+- **Time:** O(n), **Space:** O(1)
+
+---
+
+
+
+---
+
+### 1. Push/Pop Front & Back, Insert/Delete at Position, Search, Print
+
+**Approach:**  
+- Use pointer manipulation for each operation.
+- For push/pop front: update head.
+- For push/pop back: traverse to end.
+- For insert/delete at position: traverse to position, update links.
+- For search: traverse and compare values.
+- For print: traverse and print values.
+
+**Pseudocode:**
+```
+pushFront(data):
+    newNode = Node(data)
+    newNode.next = head
+    head = newNode
+
+pushBack(data):
+    newNode = Node(data)
+    if head == NULL: head = newNode
+    else: traverse to end, last.next = newNode
+
+popFront():
+    if head == NULL: return
+    temp = head
+    head = head.next
+    delete temp
+
+popBack():
+    if head == NULL: return
+    if head.next == NULL: delete head; head = NULL
+    else: traverse to second last, delete last
+
+insertAtPosition(data, pos):
+    if pos == 0: pushFront(data)
+    else: traverse to pos-1, insert newNode
+
+deleteAtPosition(pos):
+    if pos == 0: popFront()
+    else: traverse to pos-1, delete node at pos
+
+search(key):
+    traverse, if node.data == key: return true
+    return false
+
+print():
+    traverse, print node.data
+```
+
+---
+
+### 2. Reverse Linked List
+
+**Brute Force:**  
+- Copy values to array, reverse array, reassign to nodes.
+
+**Optimal:**  
+- Reverse pointers in-place.
+
+**Pseudocode:**
+```
+reverseList(head):
+    prev = NULL
+    curr = head
+    while curr != NULL:
+        next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+    return prev
+```
+
+---
+
+### 3. Find Middle of Linked List
+
+**Brute Force:**  
+- Count nodes, go to middle.
+
+**Optimal:**  
+- Use slow/fast pointers.
+
+**Pseudocode:**
+```
+middleNode(head):
+    slow = head
+    fast = head
+    while fast != NULL and fast.next != NULL:
+        slow = slow.next
+        fast = fast.next.next
+    return slow
+```
+
+---
+
+### 4. Detect Cycle in Linked List
+
+**Brute Force:**  
+- Use hash set to store visited nodes.
+
+**Optimal:**  
+- Floyd’s Cycle Detection (slow/fast pointers).
+
+**Pseudocode:**
+```
+hasCycle(head):
+    slow = head
+    fast = head
+    while fast != NULL and fast.next != NULL:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast: return true
+    return false
+```
+
+---
+
+### 5. Length of Loop in Linked List
+
+**Brute Force:**  
+- Use map to store node positions, detect revisit.
+
+**Optimal:**  
+- After cycle detected, count nodes in loop.
+
+**Pseudocode:**
+```
+countNodesinLoop(head):
+    slow = head
+    fast = head
+    while fast != NULL and fast.next != NULL:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            count = 1
+            temp = slow.next
+            while temp != slow:
+                count += 1
+                temp = temp.next
+            return count
+    return 0
+```
+
+---
+
+### 6. Odd-Even Linked List
+
+**Brute Force:**  
+- Copy odd/even nodes to arrays, rebuild list.
+
+**Optimal:**  
+- Use two pointers to build odd/even chains, connect at end.
+
+**Pseudocode:**
+```
+oddEvenList(head):
+    if head == NULL or head.next == NULL: return head
+    odd = head
+    even = head.next
+    evenHead = even
+    while even != NULL and even.next != NULL:
+        odd.next = even.next
+        odd = odd.next
+        even.next = odd.next
+        even = even.next
+    odd.next = evenHead
+    return head
+```
+
+---
+
+### 7. Sort Linked List of 0s, 1s, 2s
+
+**Brute Force:**  
+- Count 0s, 1s, 2s, overwrite node values.
+
+**Optimal:**  
+- Create three dummy lists for 0s, 1s, 2s, merge.
+
+**Pseudocode:**
+```
+sortList(head):
+    zeroDummy, oneDummy, twoDummy = new Node(), new Node(), new Node()
+    zero, one, two = zeroDummy, oneDummy, twoDummy
+    curr = head
+    while curr != NULL:
+        if curr.val == 0: zero.next = curr; zero = zero.next
+        elif curr.val == 1: one.next = curr; one = one.next
+        else: two.next = curr; two = two.next
+        curr = curr.next
+    zero.next = oneDummy.next if oneDummy.next else twoDummy.next
+    one.next = twoDummy.next
+    two.next = NULL
+    return zeroDummy.next
+```
+
+---
+
+### 8. Merge Two Sorted Linked Lists
+
+**Brute Force:**  
+- Copy all nodes to array, sort, rebuild list.
+
+**Optimal:**  
+- Merge nodes one by one (iterative/recursive).
+
+**Pseudocode:**
+```
+mergeTwoLists(list1, list2):
+    dummy = new Node()
+    tail = dummy
+    while list1 != NULL and list2 != NULL:
+        if list1.val < list2.val:
+            tail.next = list1
+            list1 = list1.next
+        else:
+            tail.next = list2
+            list2 = list2.next
+        tail = tail.next
+    if list1 != NULL: tail.next = list1
+    if list2 != NULL: tail.next = list2
+    return dummy.next
+```
+
+---
+
+### 9. Copy List with Random Pointer
+
+**Brute Force:**  
+- Use hash map to store original→copy mapping, set next/random pointers.
+
+**Optimal:**  
+- Interleave copy nodes, set random pointers, split lists.
+
+**Pseudocode:**
+```
+copyRandomList(head):
+    if head == NULL: return NULL
+    # Step 1: Clone nodes and insert after original
+    temp = head
+    while temp != NULL:
+        copy = new Node(temp.val)
+        copy.next = temp.next
+        temp.next = copy
+        temp = copy.next
+    # Step 2: Set random pointers
+    temp = head
+    while temp != NULL:
+        if temp.random != NULL:
+            temp.next.random = temp.random.next
+        temp = temp.next.next
+    # Step 3: Separate lists
+    temp = head
+    newHead = head.next
+    copy = newHead
+    while temp != NULL:
+        temp.next = temp.next.next
+        if copy.next != NULL:
+            copy.next = copy.next.next
+        temp = temp.next
+        copy = copy.next
+    return newHead
+```
+
+---
+
+### 10. Check if Linked List is Palindrome
+
+**Brute Force:**  
+- Store values in stack, compare with original list.
+
+**Optimal:**  
+- Reverse second half, compare halves, restore list.
+
+**Pseudocode:**
+```
+isPalindrome(head):
+    if head == NULL or head.next == NULL: return true
+    # Find middle
+    slow, fast = head, head
+    while fast.next != NULL and fast.next.next != NULL:
+        slow = slow.next
+        fast = fast.next.next
+    # Reverse second half
+    secondHalf = reverse(slow.next)
+    firstHalf = head
+    temp = secondHalf
+    while temp != NULL:
+        if firstHalf.val != temp.val: return false
+        firstHalf = firstHalf.next
+        temp = temp.next
+    # Restore
+    slow.next = reverse(secondHalf)
+    return true
+```
+
+---
+
+### 11. Remove Nth Node from End
+
+**Brute Force:**  
+- Count nodes, remove `(length-n+1)`th node.
+
+**Optimal:**  
+- Use two pointers with gap n, remove node.
+
+**Pseudocode:**
+```
+removeNthFromEnd(head, n):
+    dummy = new Node()
+    dummy.next = head
+    fast = dummy
+    slow = dummy
+    for i in range(n): fast = fast.next
+    while fast.next != NULL:
+        fast = fast.next
+        slow = slow.next
+    slow.next = slow.next.next
+    return dummy.next
+```
+
+---
+
+### 12. Delete Middle Node
+
+**Brute Force:**  
+- Count nodes, delete middle.
+
+**Optimal:**  
+- Use slow/fast pointers, delete middle.
+
+**Pseudocode:**
+```
+deleteMiddle(head):
+    if head == NULL or head.next == NULL: return NULL
+    slow = head
+    fast = head
+    prev = NULL
+    while fast != NULL and fast.next != NULL:
+        prev = slow
+        slow = slow.next
+        fast = fast.next.next
+    prev.next = slow.next
+    return head
+```
+
+---
+
+### 13. Sort Linked List
+
+**Brute Force:**  
+- Copy to array, sort, reassign.
+
+**Optimal:**  
+- Merge sort on linked list.
+
+**Pseudocode:**
+```
+sortList(head):
+    if head == NULL or head.next == NULL: return head
+    slow = head
+    fast = head.next
+    while fast != NULL and fast.next != NULL:
+        slow = slow.next
+        fast = fast.next.next
+    mid = slow.next
+    slow.next = NULL
+    left = sortList(head)
+    right = sortList(mid)
+    return merge(left, right)
+```
+
+---
+
+### 14. Find Intersection Point of Y-shaped LL
+
+**Brute Force:**  
+- Compare each node in list A to all nodes in list B.
+
+**Optimal:**  
+- Align lengths, move together to find intersection.
+
+**Pseudocode:**
+```
+getIntersectionNode(headA, headB):
+    lenA = getLength(headA)
+    lenB = getLength(headB)
+    while lenA > lenB: headA = headA.next; lenA -= 1
+    while lenB > lenA: headB = headB.next; lenB -= 1
+    while headA != NULL and headB != NULL:
+        if headA == headB: return headA
+        headA = headA.next
+        headB = headB.next
+    return NULL
+```
+
+---
+
+### 15. Add 1 to Number Represented by LL
+
+**Brute Force:**  
+- Convert to integer, add 1, rebuild list.
+
+**Optimal:**  
+- Reverse, add 1, reverse back.
+
+**Pseudocode:**
+```
+addOne(head):
+    head = reverse(head)
+    temp = head
+    carry = 1
+    while temp != NULL and carry:
+        sum = temp.val + carry
+        temp.val = sum % 10
+        carry = sum // 10
+        if temp.next == NULL and carry:
+            temp.next = Node(carry)
+            carry = 0
+        temp = temp.next
+    return reverse(head)
+```
+
+---
+
+### 16. Add Two Numbers Represented by LL
+
+**Brute Force:**  
+- Convert both to integers, add, rebuild list.
+
+**Optimal:**  
+- Traverse both, add digits, manage carry.
+
+**Pseudocode:**
+```
+addTwoNumbers(l1, l2):
+    dummy = Node(0)
+    temp = dummy
+    carry = 0
+    while l1 != NULL or l2 != NULL or carry:
+        sum = carry
+        if l1 != NULL: sum += l1.val; l1 = l1.next
+        if l2 != NULL: sum += l2.val; l2 = l2.next
+        carry = sum // 10
+        temp.next = Node(sum % 10)
+        temp = temp.next
+    return dummy.next
+```
+
+---
+
