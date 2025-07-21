@@ -1128,7 +1128,7 @@ Below is an organized, exhaustive set of technical interview questions, based on
 - Is Python a pure OOP language? How does it implement OOP (examples)?
 - Difference between `==` and `.equals()` in Java.
 - What are exceptions in Java (or Python), and how are they handled? Provide code.
-
+ What is the difference between an error and an exception?
 ### Design and Patterns
 - Design a ticket management or payment gateway system using OOP principles.
 - Discuss and provide examples of SOLID principles.
@@ -1283,6 +1283,18 @@ When preparing for the ION Group Technical Analyst role, it’s essential to not
 
 - How do you pick a structure for a dynamic leaderboard or ranking dashboard?  
   *Answer: Heap or Balanced BST—supports quick ranking, min/max retrieval.*
+
+ Q. What data structure would you use to manage an elevator system?
+
+Data Structures
+Ans. Use a queue data structure to manage requests and prioritize based on current direction and proximity.
+Use a queue to store requests in the order they are received.
+
+Prioritize requests based on the current direction of the elevator and proximity to the current location.
+
+Update the queue as new requests come in or as the elevator reaches a new floor.
+
+Example: If the elevator is going up and receives a request to go down from a lower floor, prioritize that request after serving all current upward requests.
 
 ## Key Takeaways
 
