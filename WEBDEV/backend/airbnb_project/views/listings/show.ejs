@@ -1,0 +1,43 @@
+<!--
+  show.ejs - Listing Details
+  This page displays all details for a single property listing.
+  It shows the title, description, price, location, and all images.
+  It also provides links to edit or delete the listing.
+
+  FLOW (numbered):
+  1. User comes to this page by:
+     a. Clicking 'View Details' on the listings page (/listings)
+     b. Or by typing /listings/:id directly in the browser
+  2. Server gets the listing by ID from DB and renders this page
+  3. User can:
+     a. Click 'Edit Listing' → goes to /listings/:id/edit (edit form)
+     b. Click 'Delete Listing' → submits POST to /listings/:id/delete (deletes listing)
+  4. After delete, server redirects to /listings
+-->
+<% if (listing) { %>
+  <div class="listing-details">
+    <h1><%= listing.title %></h1>
+    <p><%= listing.description %></p>
+    <p>Price: $<%= listing.price %> per night</p>
+    <p>Location: <%= listing.location.city %>, <%= listing.location.country %></p>
+
+    <!-- Show all images for this listing -->
+    <% if (listing.images && listing.images.length > 0) { %>
+      <div class="listing-images">
+        <% listing.images.forEach(image => { %>
+          <img src="<%= image %>" alt="<%= listing.title %>" />
+        <% }); %>
+      </div>
+    <% } else { %>
+      <p>No images available for this listing.</p>
+    <% } %>
+
+    <!-- 3a. User clicks this link to edit the listing -->
+    <a href="/listings/<%= listing._id %>/edit">Edit Listing</a>
+
+    <!-- 3b. User clicks this button to delete the listing -->
+    <form action="/listings/<%= listing._id %>/delete" method="POST" style="display:inline;">
+      <button type="submit">Delete Listing</button>
+    </form>
+  </div>
+<% } %>

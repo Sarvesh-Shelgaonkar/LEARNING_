@@ -1,0 +1,39 @@
+<!--
+  new.ejs - New Listing Form
+  This page shows a form to create a new property listing.
+  When submitted, it sends the data to the server to add a new listing.
+
+  FLOW (numbered):
+  1. User comes to this page by:
+     a. Clicking the 'Create New Listing' button on the listings page (/listings)
+     b. Or by typing /listings/new directly in the browser
+  2. Server renders this form page
+  3. User fills out the form fields
+  4. User clicks 'Create Listing' button
+  5. Browser sends POST request to /listings with form data
+  6. Server creates new listing in DB and redirects to /listings
+-->
+<form action="/listings" method="POST">
+  <!-- Title input -->
+  <label for="title">Title:</label>
+  <input type="text" id="title" name="title" required>
+
+  <!-- Description input -->
+  <label for="description">Description:</label>
+  <textarea id="description" name="description" required></textarea>
+
+  <!-- Price input -->
+  <label for="price">Price:</label>
+  <input type="number" id="price" name="price" required>
+
+  <!-- Location input (city name for simplicity) -->
+  <label for="location">Location (city):</label>
+  <input type="text" id="location" name="location" required>
+
+  <!-- Images input (comma-separated URLs) -->
+  <label for="images">Images (comma-separated URLs):</label>
+  <input type="text" id="images" name="images" required>
+
+  <!-- 4. User clicks this button to submit the form -->
+  <button type="submit">Create Listing</button>
+</form>

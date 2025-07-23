@@ -1,0 +1,40 @@
+<!--
+  edit.ejs - Edit Listing Form
+  This page shows a form to edit an existing property listing.
+  The form is pre-filled with the current listing data.
+  When submitted, it updates the listing in the database.
+
+  FLOW (numbered):
+  1. User comes to this page by:
+     a. Clicking 'Edit Listing' on the details page (/listings/:id)
+     b. Or by typing /listings/:id/edit directly in the browser
+  2. Server gets the listing by ID and renders this form page
+  3. User edits the form fields
+  4. User clicks 'Update Listing' button
+  5. Browser sends POST request to /listings/:id with updated data
+  6. Server updates the listing in DB and redirects to /listings/:id (details page)
+-->
+<form action="/listings/<%= listing._id %>" method="POST">
+  <!-- Title input -->
+  <label for="title">Title:</label>
+  <input type="text" id="title" name="title" value="<%= listing.title %>" required>
+
+  <!-- Description input -->
+  <label for="description">Description:</label>
+  <textarea id="description" name="description" required><%= listing.description %></textarea>
+
+  <!-- Price input -->
+  <label for="price">Price:</label>
+  <input type="number" id="price" name="price" value="<%= listing.price %>" required>
+
+  <!-- Location input (city name for simplicity) -->
+  <label for="location">Location (city):</label>
+  <input type="text" id="location" name="location" value="<%= listing.location.city %>" required>
+
+  <!-- Images input (comma-separated URLs) -->
+  <label for="images">Images (comma-separated URLs):</label>
+  <input type="text" id="images" name="images" value="<%= listing.images.join(', ') %>" required>
+
+  <!-- 4. User clicks this button to submit the form and update the listing -->
+  <button type="submit">Update Listing</button>
+</form>

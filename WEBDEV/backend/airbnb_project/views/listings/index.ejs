@@ -1,0 +1,36 @@
+<!--
+  index.ejs - Show all listings
+  This page displays a list of all property listings.
+  For each listing, it shows the title, description, price, location, and the first image (if available).
+  Clicking 'View Details' goes to the details page for that listing.
+
+  FLOW (numbered):
+  1. User comes to this page by:
+     a. Typing /listings in the browser
+     b. Being redirected here after creating, editing, or deleting a listing
+  2. Server gets all listings from DB and renders this page
+  3. User can click 'Create New Listing' to go to the new listing form
+  4. For each listing:
+     a. Shows info (title, description, etc.)
+     b. Shows first image if available
+     c. [5] User clicks 'View Details' → goes to /listings/:id (details page)
+-->
+
+<!-- form method get button create new listing -->
+<form method="get" action="/listings/new">
+  <button type="submit">Create New Listing</button>
+</form>
+
+<% listings.forEach(listing => { %>
+  <div class="listing">
+    <h2><%= listing.title %></h2>
+    <p><%= listing.description %></p>
+    <p>Price: $<%= listing.price %></p>
+    <p>Location: <%= listing.location.city %>, <%= listing.location.country %></p>
+    <% if (listing.images && listing.images.length > 0) { %>
+      <img src="<%= listing.images[0] %>" alt="<%= listing.title %>" />
+    <% } %>
+    <!-- 5. User clicks this link to see details for this listing -->
+    <a href="/listings/<%= listing._id %>">View Details</a>
+  </div>
+<% }); %>
