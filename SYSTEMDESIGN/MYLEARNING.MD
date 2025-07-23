@@ -715,3 +715,106 @@ ATM → Main: true
 
 
 <img src="deltaasset2/Screenshot 2025-06-10 214040.png" width="1100" height="400">
+
+
+
+
+
+
+
+
+
+
+
+#  piyush garg
+
+
+
+# System Design Interview Notes for Tech Analyst Role
+
+## System Design Fundamentals
+
+- **System Design** explains how to build scalable and reliable backend systems that handle real-world client needs.
+- **Clients**: Devices like laptops, mobiles, IoT gadgets connect to backend systems via the internet.
+- **Servers**: Handle requests, process data, and store information for client devices.
+
+## Networking Basics
+
+- **IP Address**: Numeric address identifying servers on the internet (like 192.168.1.1).
+- **DNS (Domain Name System)**: Translates user-friendly domain names (e.g., amazon.com) into IP addresses; makes web navigation simple.
+
+## Scaling
+
+- **Vertical Scaling**
+    - Increases the power (CPU, RAM) of a single server.
+    - Pros: Quick to implement.
+    - Cons: Downtime needed for upgrades; limited by maximum server capacity.
+- **Horizontal Scaling**
+    - Adds multiple servers to the system, distributing load.
+    - Pros: No downtime; practically limitless scaling; improves fault tolerance.
+
+## Load Balancers
+
+- Distribute incoming traffic across multiple servers for efficiency and reliability.
+- **Common algorithms**: Round-robin (equal distribution), least connections.
+- Used by cloud services (like AWS Elastic Load Balancer) to route requests.
+
+## API Gateway
+
+- Acts as the single entry point for all client requests.
+- Handles:
+    - Routing to appropriate microservices
+    - Authentication and security checks
+    - Aggregating responses
+
+## Microservices Architecture
+
+- Breaks a large system into smaller, independently deployable components (e.g., auth, payments, orders).
+- **Benefits**:
+    - Independent scaling and deployment.
+    - Greater fault isolation.
+
+## Asynchronous Processing & Queues
+
+- Used for background jobs (e.g., sending emails, processing file uploads) to avoid making clients wait.
+- **Queue Systems**: AWS SQS is a popular example.
+- **Polling Types**:
+    - Push: Service delivers messages to workers.
+    - Pull: Workers periodically check for new messages (short-poll, long-poll).
+
+## Rate Limiting
+
+- Controls the number of allowed requests (e.g., max 10 emails/second).
+- Prevents overloading services and helps manage third-party API limitations.
+
+## Event-Driven & Pub-Sub Architectures
+
+- **Event**: A trigger (like user signup or payment) that initiates actions.
+- **Publish-Subscribe (Pub-Sub)**:
+    - Publishers emit events; subscribers listen and react.
+    - Tools: AWS SNS sends notifications to multiple destinations (email, SMS, etc.) from one event.
+
+## Resilience Patterns
+
+- **Dead Letter Queues**: Store failed tasks for later review or retry, ensuring no data is lost.
+- **Message Acknowledgement**: Confirms successful processing of messages; enables retries if failures occur.
+
+## Common System Design Terms
+
+| Term                   | Definition                                                                             |
+|------------------------|----------------------------------------------------------------------------------------|
+| Scalability            | Ability of a system to handle increasing load by scaling up/out                        |
+| Fault Tolerance        | System's capability to continue functioning when some components fail                  |
+| Availability           | Percentage of time the system is operational and accessible to users                   |
+| Latency                | Time taken for a request to travel from sender to receiver and back                    |
+| Throughput             | Number of requests a system handles per second                                         |
+
+## Best Practices for Interviews
+
+- Start with a **clear problem statement**. Clarify user flows, scale, and functional requirements.
+- Propose a **simple design first**. Justify choices, then address bottlenecks or scale.
+- Communicate trade-offs (vertical vs. horizontal scaling, monolith vs. microservices).
+- Diagram key components: clients, servers, load balancers, gateways, databases, microservices, queues.
+- Discuss **failure handling** and **data consistency**.
+- Be ready to answer questions about **cloud services**, **caching**, and **monitoring**.
+

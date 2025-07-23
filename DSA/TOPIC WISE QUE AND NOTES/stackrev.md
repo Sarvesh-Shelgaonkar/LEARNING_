@@ -871,3 +871,93 @@ This method avoids redundant comparisons. For each number in `nums2`, you:
 | Monotonic Stack + Map | O(N + M) | O(N)  | ✅ Optimal  |
 
 Let me know if you want a dry run or visual of how the stack behaves step by step!
+
+
+
+Your code is **almost perfect** and implements the **Next Greater Element II** (circular version) correctly. ✅
+But let me walk you through a clean-up, clarify it, and explain **why and how it works**, step by step.
+
+---
+
+### ✅ **Cleaned-up and Commented Version of Your Code**
+
+```cpp
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> ans(n, -1);     // Initialize all answers as -1
+        stack<int> st;              // Stack stores indices
+
+        // Loop from 2n-1 to 0 to simulate circular array
+        for (int i = 2 * n - 1; i >= 0; i--) {
+            int idx = i % n;        // Wrap around using modulo
+
+            // Pop all smaller or equal elements from stack
+            while (!st.empty() && nums[st.top()] <= nums[idx]) {
+                st.pop();
+            }
+
+            // Only assign during first pass (i < n is optional, here always assigning)
+            if (!st.empty()) {
+                ans[idx] = nums[st.top()];
+            } // else: already initialized to -1
+
+            // Push current index to stack
+            st.push(idx);
+        }
+
+        return ans;
+    }
+};
+```
+
+---
+
+### 🧠 **Explanation**
+
+* You are using a **stack of indices**, not values. So you use `nums[st.top()]` to access the value.
+* You simulate a **circular array** by iterating from `2n-1` to `0` and accessing `nums[i % n]`.
+* At each step:
+
+  * Pop smaller or equal values since they **can’t be the next greater** for the current element.
+  * If the stack has something after popping, it’s the **next greater** for `nums[idx]`.
+  * Push current index for future comparisons.
+
+---
+
+### ✅ **Why It Works Without Extra Count Check**
+
+You don't need an external counter to track rounds because:
+
+* The loop runs `2n` times.
+* You access all values in a **circular manner**.
+* First pass fills stack for circular behavior.
+* Second pass (first `n` iterations of the loop) assigns results.
+
+---
+
+### 🧪 Example Dry Run
+
+Input: `nums = [1, 2, 1]`
+
+Stack during 2n pass:
+
+```
+i = 5 (idx = 2): stack empty → push 2
+i = 4 (idx = 1): stack has 2 (nums[2] = 1) < nums[1]=2 → pop → stack empty → push 1
+i = 3 (idx = 0): stack has 1 (nums[1]=2) > nums[0]=1 → ans[0]=2 → push 0
+...
+```
+
+Final Answer: `[2, -1, 2]`
+
+---
+
+Let me know if you want:
+
+* 🔄 Reverse approach (from left to right)
+* 🧾 Python/Java version
+* 📊 Visual dry run or stack trace diagram
+
+Happy to explain further!
