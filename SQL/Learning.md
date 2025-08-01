@@ -2313,3 +2313,124 @@ We output the manager’s name (from alias `a1`):
 * The query returns **names of those managers**.
 
 ---
+Here are **detailed step-by-step notes** for this SQL query, including its **purpose**, **tables**, **execution explanation**, and **output**:
+
+---
+
+## ✅ **Problem Purpose**
+
+Find the **average selling price** of each product **based on a date range** defined in the `Prices` table and sales records from `UnitsSold`.
+
+---
+
+## 📋 **Tables**
+
+### 1. `Prices`
+
+| product\_id | start\_date | end\_date  | price |
+| ----------- | ----------- | ---------- | ----- |
+| 1           | 2024-01-01  | 2024-01-31 | 10.00 |
+| 1           | 2024-02-01  | 2024-02-28 | 12.00 |
+| 2           | 2024-01-01  | 2024-02-28 | 8.00  |
+
+* Defines **price ranges** for each product over **specific date intervals**.
+
+---
+
+### 2. `UnitsSold`
+
+| product\_id | purchase\_date | units |
+| ----------- | -------------- | ----- |
+| 1           | 2024-01-10     | 100   |
+| 1           | 2024-02-10     | 200   |
+| 2           | 2024-01-20     | 50    |
+
+* Stores **how many units** of each product were sold **on specific dates**.
+
+---
+
+## 🔍 **Query Breakdown & Execution Steps**
+
+```sql
+SELECT 
+  p.product_id, 
+  ROUND(IFNULL((SUM(p.price * s.units) / SUM(s.units)), 0), 2) AS average_price
+FROM Prices p
+LEFT JOIN UnitsSold s
+  ON p.product_id = s.product_id
+  AND s.purchase_date BETWEEN p.start_date AND p.end_date
+GROUP BY p.product_id;
+```
+
+---
+
+### 🔢 **Step-by-Step Execution**
+
+#### ✅ Step 1: `LEFT JOIN`
+
+```sql
+FROM Prices p
+LEFT JOIN UnitsSold s
+  ON p.product_id = s.product_id
+  AND s.purchase_date BETWEEN p.start_date AND p.end_date
+```
+
+* Joins the `Prices` and `UnitsSold` tables.
+* **Only includes UnitsSold rows** where `purchase_date` is **within the price period** defined by `start_date` and `end_date`.
+
+🧠 **Important**:
+
+* `LEFT JOIN` ensures **every price range is preserved** even if no units were sold during that time.
+
+---
+
+#### ✅ Step 2: `p.price * s.units`
+
+* Multiplies the **price during the matched period** by **units sold** to compute **revenue** for that period.
+
+---
+
+#### ✅ Step 3: `SUM(p.price * s.units)` and `SUM(s.units)`
+
+```sql
+ROUND(IFNULL((SUM(p.price * s.units) / SUM(s.units)), 0), 2)
+```
+
+* Total revenue / total units = **average price actually paid**.
+* `IFNULL(..., 0)` ensures:
+
+  * If **no sales**, the result is `0` (prevents division by NULL).
+* `ROUND(..., 2)` formats the answer to **2 decimal places**.
+
+---
+
+#### ✅ Step 4: `GROUP BY p.product_id`
+
+* Aggregates results **per product** (even across multiple time ranges and sales).
+
+---
+
+### 📤 Final Output Format
+
+| product\_id | average\_price |
+| ----------- | -------------- |
+| 1           | 11.33          |
+| 2           | 8.00           |
+
+*(Example: Product 1 had 100 units @ ₹10 and 200 units @ ₹12 → Avg = (100×10 + 200×12)/300 = ₹11.33)*
+
+---
+
+## 📝 **Summary Notes**
+
+| Key Point                         | Explanation                                                  |
+| --------------------------------- | ------------------------------------------------------------ |
+| `LEFT JOIN`                       | Ensures all price records are kept, even if no matching sale |
+| `BETWEEN start_date AND end_date` | Ensures prices match only during valid periods               |
+| `ROUND(..., 2)`                   | Two decimal place precision                                  |
+| `IFNULL(..., 0)`                  | Handles products with zero sales                             |
+| `SUM(p.price * s.units)`          | Total revenue for a product                                  |
+| `SUM(s.units)`                    | Total units sold for a product                               |
+| `GROUP BY`                        | One row per `product_id`                                     |
+
+---
