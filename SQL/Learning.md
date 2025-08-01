@@ -2209,4 +2209,107 @@ Sort the result neatly by `student_id` and `subject_name`.
 ---
 
 
+Let's walk through this query **step by step**, including input and intermediate outputs to explain what's happening:
 
+---
+
+### 🔸**Input Table: `Employee`**
+
+| id | name   | managerId |
+| -- | ------ | --------- |
+| 1  | John   | null      |
+| 2  | Robert | 1         |
+| 3  | Tom    | 1         |
+| 4  | Jerry  | 1         |
+| 5  | Donald | 1         |
+| 6  | Alice  | 1         |
+| 7  | Steve  | 2         |
+| 8  | Bob    | 2         |
+
+---
+
+### 🔸**Query Explanation**
+
+```sql
+SELECT a1.name
+FROM Employee a1
+JOIN Employee a2
+ON a1.id = a2.managerId
+GROUP BY a2.managerId
+HAVING COUNT(*) >= 5
+```
+
+---
+
+### 🔹**Step 1: Self-Join**
+
+We are joining the table to itself.
+
+* `a1` represents **manager**
+* `a2` represents **employee**
+
+```sql
+JOIN Employee a2
+ON a1.id = a2.managerId
+```
+
+🔸 This join will match every employee (`a2`) with their manager (`a1`), producing a table like:
+
+| a1.id (Manager ID) | a1.name | a2.id (Employee ID) | a2.managerId |
+| ------------------ | ------- | ------------------- | ------------ |
+| 1                  | John    | 2                   | 1            |
+| 1                  | John    | 3                   | 1            |
+| 1                  | John    | 4                   | 1            |
+| 1                  | John    | 5                   | 1            |
+| 1                  | John    | 6                   | 1            |
+| 2                  | Robert  | 7                   | 2            |
+| 2                  | Robert  | 8                   | 2            |
+
+---
+
+### 🔹**Step 2: `GROUP BY a2.managerId`**
+
+We group this joined data by manager ID.
+
+So the grouping would be:
+
+* Group 1: Manager ID = 1 (John) → employees: 2, 3, 4, 5, 6 (Count = 5)
+* Group 2: Manager ID = 2 (Robert) → employees: 7, 8 (Count = 2)
+
+---
+
+### 🔹**Step 3: `HAVING COUNT(*) >= 5`**
+
+This filters only those groups where a manager has **5 or more employees**.
+
+Only John satisfies this condition.
+
+---
+
+### 🔹**Step 4: `SELECT a1.name`**
+
+We output the manager’s name (from alias `a1`):
+
+| name |
+| ---- |
+| John |
+
+---
+
+### ✅ Final Output
+
+| name |
+| ---- |
+| John |
+
+---
+
+### 📝 Summary Notes
+
+* **Self-join** is used to relate employees with their managers.
+* We **count how many employees report to each manager**.
+* `GROUP BY a2.managerId` groups by manager.
+* `HAVING COUNT(*) >= 5` filters to managers with 5+ direct reports.
+* The query returns **names of those managers**.
+
+---
