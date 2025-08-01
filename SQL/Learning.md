@@ -2647,3 +2647,63 @@ To generate a **monthly and country-wise transaction report** with:
 * Country-wise business insights
 
 ---
+
+
+
+Here are the **short revision notes** for the MySQL query:
+
+---
+
+### ✅ **Topic**: Count Daily Active Users (Leetcode SQL – "User Activity for the Past 30 Days I")
+
+---
+
+### 🧩 **Objective**:
+
+Get the number of **distinct active users per day** for the last **30 days up to 2019-07-27** (inclusive).
+
+---
+
+### ✅ **Correct Query**:
+
+```sql
+SELECT 
+  activity_date AS day,
+  COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'
+GROUP BY activity_date;
+```
+
+---
+
+### 📘 **Key Points**:
+
+| Concept                      | Description                                                |
+| ---------------------------- | ---------------------------------------------------------- |
+| `BETWEEN`                    | Selects rows from `2019-06-28` to `2019-07-27` (inclusive) |
+| `COUNT(DISTINCT user_id)`    | Counts **unique users** per day                            |
+| `GROUP BY activity_date`     | Aggregates by each day                                     |
+| Aliases                      | `activity_date AS day` for output formatting               |
+| No filter on `activity_type` | Any activity counts as "active"                            |
+
+---
+
+### ❗ **Common Mistakes to Avoid**:
+
+* ❌ Incorrect use of `OR` without parentheses in `WHERE`
+* ❌ Grouping by `user_id` instead of `activity_date`
+* ❌ Filtering unnecessary `activity_type`
+
+---
+
+### 📊 **Expected Output Format**:
+
+| day        | active\_users |
+| ---------- | ------------- |
+| 2019-07-20 | 2             |
+| 2019-07-21 | 2             |
+
+---
+
+Let me know if you also want a **step-by-step flow**, diagram, or second part (like Leetcode version II).
