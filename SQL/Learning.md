@@ -2548,3 +2548,102 @@ We calculate the average experience for each project and round to 2 decimal plac
 
 ---
 
+Here is a **step-by-step explanation** of the query:
+
+---
+
+### ✅ **SQL Query:**
+
+```sql
+SELECT 
+  LEFT(trans_date, 7) AS month,
+  country,
+  COUNT(*) AS trans_count,
+  SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END) AS approved_count,
+  SUM(amount) AS trans_total_amount,
+  SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END) AS approved_total_amount
+FROM Transactions
+GROUP BY month, country;
+```
+
+---
+
+### 🧠 **Objective:**
+
+To generate a **monthly and country-wise transaction report** with:
+
+* Total transactions
+* Number of approved transactions
+* Total transaction amount
+* Total approved transaction amount
+
+---
+
+### 📘 **Step-by-Step Execution:**
+
+1. **`LEFT(trans_date, 7) AS month`**
+
+   * Extracts only the year and month from the `trans_date` (format: `YYYY-MM-DD`) → returns `YYYY-MM`
+   * For example:
+     `2025-07-14` → `2025-07`
+     `2025-07-28` → `2025-07`
+
+2. **`COUNT(*) AS trans_count`**
+
+   * Counts the **total number of transactions** for that `(month, country)` group.
+
+3. **`SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END)`**
+
+   * Counts **how many of those transactions were approved**.
+
+4. **`SUM(amount)`**
+
+   * Adds up the total `amount` of **all transactions** in that group.
+
+5. **`SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END)`**
+
+   * Adds up the **amounts of only the approved transactions**.
+
+6. **`FROM Transactions`**
+
+   * Uses the `Transactions` table as the data source.
+
+7. **`GROUP BY month, country`**
+
+   * Groups the data **by extracted month and country**, so every group will have:
+
+     * One month
+     * One country
+     * And all the corresponding transactions for that pair
+
+---
+
+### 📊 **Sample Input Table: `Transactions`**
+
+| trans\_id | country | state    | amount | trans\_date |
+| --------- | ------- | -------- | ------ | ----------- |
+| 1         | India   | approved | 100    | 2025-07-01  |
+| 2         | India   | declined | 50     | 2025-07-03  |
+| 3         | US      | approved | 120    | 2025-07-10  |
+| 4         | India   | approved | 80     | 2025-07-15  |
+| 5         | India   | approved | 90     | 2025-08-01  |
+
+---
+
+### 📤 **Grouped Output:**
+
+| month   | country | trans\_count | approved\_count | trans\_total\_amount | approved\_total\_amount |
+| ------- | ------- | ------------ | --------------- | -------------------- | ----------------------- |
+| 2025-07 | India   | 3            | 2               | 230                  | 180                     |
+| 2025-07 | US      | 1            | 1               | 120                  | 120                     |
+| 2025-08 | India   | 1            | 1               | 90                   | 90                      |
+
+---
+
+### ✨ **Use Cases:**
+
+* Transaction analytics dashboards
+* Monthly approval rate reports
+* Country-wise business insights
+
+---
