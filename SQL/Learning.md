@@ -2434,3 +2434,117 @@ ROUND(IFNULL((SUM(p.price * s.units) / SUM(s.units)), 0), 2)
 | `GROUP BY`                        | One row per `product_id`                                     |
 
 ---
+Here are detailed **notes and step-by-step explanation** for the given MySQL query:
+
+---
+
+### ✅ **Question Objective**
+
+You are given two tables: `Project` and `Employee`. Each project is assigned to an employee, and each employee has a certain number of experience years.
+
+**Goal**: For each `project_id`, calculate the **average experience** (in years) of employees working on that project.
+
+---
+
+### 📑 **Tables**
+
+#### 1. `Project` Table
+
+| project\_id | employee\_id |
+| ----------- | ------------ |
+| 1           | 101          |
+| 1           | 102          |
+| 2           | 103          |
+| 2           | 104          |
+| 3           | 105          |
+
+#### 2. `Employee` Table
+
+| employee\_id | experience\_years |
+| ------------ | ----------------- |
+| 101          | 3                 |
+| 102          | 5                 |
+| 103          | 7                 |
+| 104          | 6                 |
+| 105          | 4                 |
+
+---
+
+### ✅ **Query**
+
+```sql
+SELECT 
+  p.project_id,
+  ROUND(AVG(e.experience_years), 2) AS average_years
+FROM 
+  Project p
+JOIN 
+  Employee e
+ON 
+  p.employee_id = e.employee_id
+GROUP BY 
+  p.project_id;
+```
+
+---
+
+### ⚙️ **Step-by-Step Execution**
+
+#### 🔹 Step 1: `JOIN` `Project` with `Employee`
+
+We match each project’s `employee_id` to the `employee_id` in the `Employee` table to get their experience.
+
+**Result after JOIN**:
+
+| project\_id | employee\_id | experience\_years |
+| ----------- | ------------ | ----------------- |
+| 1           | 101          | 3                 |
+| 1           | 102          | 5                 |
+| 2           | 103          | 7                 |
+| 2           | 104          | 6                 |
+| 3           | 105          | 4                 |
+
+---
+
+#### 🔹 Step 2: `GROUP BY p.project_id`
+
+We group the rows by `project_id`, so we can calculate aggregate functions like `AVG()` for each group.
+
+**Groups formed**:
+
+* Group 1: project\_id = 1 → \[3, 5]
+* Group 2: project\_id = 2 → \[7, 6]
+* Group 3: project\_id = 3 → \[4]
+
+---
+
+#### 🔹 Step 3: `AVG()` and `ROUND(...)`
+
+We calculate the average experience for each project and round to 2 decimal places:
+
+* Project 1: (3 + 5) / 2 = **4.00**
+* Project 2: (7 + 6) / 2 = **6.50**
+* Project 3: (4) = **4.00**
+
+---
+
+### 📤 Final Output
+
+| project\_id | average\_years |
+| ----------- | -------------- |
+| 1           | 4.00           |
+| 2           | 6.50           |
+| 3           | 4.00           |
+
+---
+
+### 🧠 Notes Summary
+
+* **JOIN** is used to get each employee's experience for their assigned project.
+* **GROUP BY** groups all rows by `project_id` for aggregation.
+* **AVG()** computes average experience per project.
+* **ROUND(x, 2)** ensures the result is rounded to 2 decimal places.
+* **If there are no employees on a project**, that project won’t appear in result (because we used `JOIN`, not `LEFT JOIN`).
+
+---
+
