@@ -3117,3 +3117,227 @@ But is **optional** unless duplicate rows need to be grouped.
 * ✅ You can write it cleanly with `SELECT ... FROM Triangle`
 
 Let me know if you want handwritten-style notes or add it to your previous notes!
+
+
+
+
+
+
+
+### 🔸 Question Recap (LeetCode 180 – Consecutive Numbers)
+
+**Table**: `Logs`
+
+| Column Name | Type    |                               |
+| ----------- | ------- | ----------------------------- |
+| id          | int     | (primary key, auto-increment) |
+| num         | varchar |                               |
+
+✅ **Goal**: Find all `num` values that appear **at least three times consecutively** (i.e., in **three rows in a row**, ordered by `id`).
+
+---
+
+
+
+SELECT DISTINCT l1.num as ConsecutiveNums
+FROM Logs l1
+JOIN Logs l2 ON l1.id = l2.id + 1
+JOIN Logs l3 ON l2.id = l3.id + 1
+where l1.num=l2.num and l2.num=l3.num
+
+
+
+
+
+## ✅ Query (Using `LAG()` Function)
+
+```sql
+SELECT DISTINCT num
+FROM (
+    SELECT num,
+           LAG(num, 1) OVER (ORDER BY id) AS prev1,
+           LAG(num, 2) OVER (ORDER BY id) AS prev2
+    FROM Logs
+) AS sub
+WHERE num = prev1 AND num = prev2;
+```
+
+---
+
+## 🧠 Step-by-Step Explanation
+
+### 🔹 Step 1: Use of `LAG()` Function
+
+* `LAG(column, offset) OVER (ORDER BY ...)` gives the value of a **previous row** based on ordering.
+
+So here:
+
+```sql
+LAG(num, 1) OVER (ORDER BY id) AS prev1
+LAG(num, 2) OVER (ORDER BY id) AS prev2
+```
+
+👉 For each row, this will show the value of:
+
+* `prev1`: The `num` value 1 row **before** it
+* `prev2`: The `num` value 2 rows **before** it
+
+---
+
+### 🔹 Step 2: Subquery Output
+
+For this input:
+
+| id | num |
+| -- | --- |
+| 1  | a   |
+| 2  | a   |
+| 3  | a   |
+| 4  | b   |
+| 5  | b   |
+| 6  | a   |
+
+The subquery will output:
+
+| num | prev1 | prev2 |   |
+| --- | ----- | ----- | - |
+| a   | NULL  | NULL  |   |
+| a   | a     | NULL  |   |
+| a   | a     | a     | ✅ |
+| b   | a     | a     |   |
+| b   | b     | a     |   |
+| a   | b     | b     |   |
+
+---
+
+### 🔹 Step 3: Filter rows where `num = prev1 = prev2`
+
+Only keep rows where current number equals the last 2 numbers:
+
+```sql
+WHERE num = prev1 AND num = prev2
+```
+
+➡️ This ensures **3 consecutive occurrences**.
+
+For our example, only 1 row (id = 3) satisfies this condition (`a = a = a`), so final result:
+
+| num |
+| --- |
+| a   |
+
+We use `DISTINCT` to avoid duplicate values if there are multiple overlapping triplets (like 4 consecutive `a`s).
+
+---
+
+## ✅ Final Output
+
+The query will return all numbers that appeared **3 or more times consecutively**, like:
+
+```
++-----+
+| num |
++-----+
+| a   |
++-----+
+```
+
+---
+
+## ✅ Why it works well
+
+* Clean and readable
+* Uses window functions → **no self-joins**
+* Handles overlapping triplets like: `a, a, a, a` (would still return only `a`)
+
+---
+
+## ✅ Alternative Solutions & Optimizations
+
+### 🔸 1. Self Join (Your initial approach)
+
+```sql
+SELECT l1.num
+FROM Logs l1, Logs l2, Logs l3
+WHERE l1.num = l2.num AND l2.num = l3.num
+  AND l1.id = l2.id + 1
+  AND l2.id = l3.id + 1;
+```
+
+🧠 Logic:
+
+* Match 3 consecutive rows by joining logs with previous 2 ids
+* Works well for small datasets
+* ❌ But less efficient on large datasets due to 3-way self join
+
+Add `DISTINCT` if needed.
+
+---
+
+### 🔸 2. Using Variables (MySQL-specific)
+
+```sql
+SELECT num
+FROM (
+    SELECT num, 
+           CASE 
+               WHEN @prev_num = num THEN @count := @count + 1 
+               ELSE @count := 1 
+           END AS count,
+           @prev_num := num
+    FROM Logs, (SELECT @count := 0, @prev_num := NULL) AS init
+    ORDER BY id
+) AS t
+WHERE count >= 3;
+```
+
+✅ Efficient in older MySQL versions (without window functions)
+
+---
+
+### 🔸 3. CTE with `ROW_NUMBER` and grouping (Advanced)
+
+```sql
+WITH NumberGroups AS (
+    SELECT *, 
+           ROW_NUMBER() OVER (ORDER BY id) - 
+           ROW_NUMBER() OVER (PARTITION BY num ORDER BY id) AS grp
+    FROM Logs
+),
+Grouped AS (
+    SELECT num, COUNT(*) as freq
+    FROM NumberGroups
+    GROUP BY num, grp
+)
+SELECT DISTINCT num
+FROM Grouped
+WHERE freq >= 3;
+```
+
+🧠 Groups consecutive sequences using a neat `ROW_NUMBER()` trick.
+
+---
+
+## 🟢 Recommended Approach (Best for SQL Interview)
+
+Use this:
+
+```sql
+SELECT DISTINCT num
+FROM (
+    SELECT num,
+           LAG(num, 1) OVER (ORDER BY id) AS prev1,
+           LAG(num, 2) OVER (ORDER BY id) AS prev2
+    FROM Logs
+) AS sub
+WHERE num = prev1 AND num = prev2;
+```
+
+✅ Clean
+✅ Efficient
+✅ Uses modern SQL
+✅ Works with overlapping triplets
+
+---
+
+Would you like a visual diagram of how the `LAG` version works?
