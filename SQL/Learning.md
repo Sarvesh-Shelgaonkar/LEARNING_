@@ -2919,3 +2919,201 @@ HAVING COUNT(DISTINCT product_key) = (SELECT COUNT(*) FROM Product);
 
 ---
 
+Here are your **clean SQL notes** for the query with `primary_flag`, including explanation, corrected version, and an example table — written in your preferred notes style:
+
+---
+
+## 📘 Notes for:
+
+```sql
+SELECT employee_id, department_id
+FROM Employee 
+WHERE primary_flag = 'Y' 
+   OR employee_id IN (
+       SELECT employee_id
+       FROM Employee
+       GROUP BY employee_id
+       HAVING COUNT(*) = 1
+   );
+```
+
+---
+
+### ✅ Goal:
+
+> Find **(employee\_id, department\_id)** pairs where:
+
+* The employee has **`primary_flag = 'Y'`**
+  **OR**
+* The employee appears in **only one department** (i.e., has only one row in the table)
+
+---
+
+### 🧠 Query Logic Breakdown:
+
+1. `primary_flag = 'Y'`
+   → Selects rows where that department is marked as primary.
+
+2. Subquery:
+
+```sql
+SELECT employee_id
+FROM Employee
+GROUP BY employee_id
+HAVING COUNT(*) = 1
+```
+
+→ Finds employees who appear **in only one department**.
+
+3. `employee_id IN (...)`
+   → Ensures employees with only one row (no ambiguity about which department is "primary") are included even if `primary_flag` is missing.
+
+---
+
+### 📊 Example Table: `Employee`
+
+| employee\_id | department\_id | primary\_flag |
+| ------------ | -------------- | ------------- |
+| 1            | 10             | Y             |
+| 2            | 20             | N             |
+| 2            | 30             | Y             |
+| 3            | 40             | N             |
+| 4            | 50             | NULL          |
+
+---
+
+### ✅ Output:
+
+| employee\_id | department\_id |                                        |
+| ------------ | -------------- | -------------------------------------- |
+| 1            | 10             | ← `primary_flag = 'Y'`                 |
+| 2            | 30             | ← `primary_flag = 'Y'`                 |
+| 4            | 50             | ← only one department, even if no flag |
+
+---
+
+### ✅ Notes (your style):
+
+```text
+- select employee_id and department_id from Employee table
+- condition 1: primary_flag = 'Y'
+- condition 2: OR employee appears only once in table (unique employee_id)
+- group by employee_id to find count=1 in subquery
+- use IN to filter those employee_ids
+
+query:
+SELECT employee_id, department_id
+FROM Employee 
+WHERE primary_flag = 'Y' 
+   OR employee_id IN (
+       SELECT employee_id
+       FROM Employee
+       GROUP BY employee_id
+       HAVING COUNT(*) = 1
+   );
+```
+
+---
+
+Let me know if you'd like:
+
+* A **handwritten version**
+* A **diagram** of how the logic flows
+* Converted version using **`LEFT JOIN`** instead of subquery
+
+
+
+
+Yes! There are **multiple ways** to solve this SQL triangle problem, where you're checking if `(x, y, z)` can form a **valid triangle**. A valid triangle satisfies the **triangle inequality theorem**:
+
+> **x + y > z**
+> **y + z > x**
+> **x + z > y**
+
+---
+
+### ✅ Method 1: Using `CASE` (your method – clean and simple)
+
+```sql
+SELECT x, y, z,
+  CASE 
+    WHEN x + y > z AND y + z > x AND x + z > y THEN 'Yes' 
+    ELSE 'No' 
+  END AS triangle
+FROM Triangle;
+```
+
+---
+
+### ✅ Method 2: Using a **subquery** with alias (if you want to reuse logic or join)
+
+```sql
+SELECT t.*, 
+  CASE 
+    WHEN x + y > z AND y + z > x AND x + z > y THEN 'Yes' 
+    ELSE 'No' 
+  END AS triangle
+FROM (SELECT * FROM Triangle) AS t;
+```
+
+---
+
+### ✅ Method 3: Using `IF()` function instead of `CASE`
+
+```sql
+SELECT x, y, z,
+  IF(x + y > z AND y + z > x AND x + z > y, 'Yes', 'No') AS triangle
+FROM Triangle;
+```
+
+---
+
+### ✅ Method 4: Use a view (if allowed)
+
+Create a view first:
+
+```sql
+CREATE VIEW triangle_view AS
+SELECT x, y, z FROM Triangle;
+```
+
+Then:
+
+```sql
+SELECT x, y, z,
+  CASE 
+    WHEN x + y > z AND y + z > x AND x + z > y THEN 'Yes' 
+    ELSE 'No' 
+  END AS triangle
+FROM triangle_view;
+```
+
+---
+
+### ❌ `GROUP BY` is **not required** here unless explicitly asked to group same sides.
+
+So, this works:
+
+```sql
+SELECT x, y, z,
+  CASE 
+    WHEN x + y > z AND y + z > x AND x + z > y THEN 'Yes' 
+    ELSE 'No' 
+  END AS triangle
+FROM Triangle
+GROUP BY x, y, z;
+```
+
+But is **optional** unless duplicate rows need to be grouped.
+
+---
+
+### 💡 Final Notes for Revision
+
+* ✅ Use `CASE` or `IF()` to return "Yes" or "No"
+* ✅ Triangle inequality is needed:
+  `x + y > z AND y + z > x AND x + z > y`
+* ✅ No need of `GROUP BY` unless required
+* ✅ You can write it cleanly with `SELECT ... FROM Triangle`
+
+Let me know if you want handwritten-style notes or add it to your previous notes!
