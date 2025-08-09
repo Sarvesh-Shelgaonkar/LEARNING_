@@ -3341,3 +3341,36 @@ WHERE num = prev1 AND num = prev2;
 ---
 
 Would you like a visual diagram of how the `LAG` version works?
+
+
+
+
+Sure — we can solve this without joins by using a **subquery** that lists all current employee IDs and then checking if the `manager_id` is **not** in that list.
+
+Here’s the subquery version:
+
+```sql
+SELECT employee_id
+FROM Employees
+WHERE salary < 30000
+  AND manager_id NOT IN (
+      SELECT employee_id
+      FROM Employees
+  )
+ORDER BY employee_id;
+```
+
+### How it works:
+
+1. `SELECT employee_id FROM Employees` → gives the IDs of all employees still in the company.
+2. `manager_id NOT IN ( ... )` → ensures the manager’s ID is **not** present in the company anymore.
+3. `salary < 30000` → applies the salary condition.
+4. `ORDER BY employee_id` → sorts the result.
+
+In your example:
+
+* Employee `1` → manager is `11` (still in company) → excluded.
+* Employee `11` → manager is `6` (not in company) → included.
+
+Do you want me to also give you a **`NOT EXISTS` version**?
+It’s often safer than `NOT IN` when there might be `NULL`s.
