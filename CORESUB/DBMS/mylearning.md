@@ -326,3 +326,65 @@ Considering normalization:
 
 If you want, I can make you a **decision framework table** that matches **normalization level, scaling method, and system type** so you can instantly choose the right design in any interview question.
 Do you want me to prepare that?
+
+
+
+
+
+
+
+
+
+Horizontal scaling is **possible** in SQL, but it’s **much harder** than in NoSQL — and that’s why people say “NoSQL scales horizontally, SQL doesn’t.”
+The difference comes from **how data is stored and how consistency is enforced**.
+
+---
+
+## **1. SQL’s Challenge with Horizontal Scaling**
+
+SQL databases follow **ACID** rules (especially *Strong Consistency*).
+When you scale horizontally (add multiple servers), SQL has to:
+
+* Keep **the same data** consistent on all nodes at the same time.
+* Support **complex JOINs** and transactions across tables — which means **nodes must talk to each other constantly**.
+* This creates **network delays** and makes scaling difficult.
+
+💡 Example:
+If a banking transaction updates `Account A` and `Account B` in one transaction, SQL must lock both rows and update them **synchronously** on all nodes → very slow in a distributed setup.
+
+---
+
+## **2. Why NoSQL Handles Horizontal Scaling Better**
+
+NoSQL databases are designed with **BASE** (Basically Available, Soft state, Eventually consistent) instead of strict ACID.
+
+* They **relax consistency** to improve availability and speed.
+* Data can be **sharded** — each node is independent and holds only part of the dataset.
+* No heavy JOINs or cross-table transactions → fewer inter-node communications.
+
+💡 Example:
+If a user likes a photo in MongoDB, it can be saved in one shard immediately, and other shards will update **later** — allowing the system to stay fast.
+
+---
+
+## **3. Summary Table**
+
+| Feature     | SQL (Traditional RDBMS) | NoSQL (MongoDB, Cassandra) |
+| ----------- | ----------------------- | -------------------------- |
+| Schema      | Fixed                   | Flexible                   |
+| Joins       | Common & necessary      | Rare or avoided            |
+| Consistency | Strong (ACID)           | Eventual (BASE)            |
+| Sharding    | Hard (manual setup)     | Built-in support           |
+| Scaling     | Mostly vertical         | Mostly horizontal          |
+
+---
+
+## **4. Bottom Line**
+
+* **SQL can** scale horizontally (Google Spanner, CockroachDB, Vitess prove it), but it’s **complex, costly, and less common** in traditional RDBMS.
+* **NoSQL is built for horizontal scaling** from the start — simpler to implement, better for massive distributed workloads.
+
+---
+
+If you want, I can make you a **flow diagram** showing exactly how a query travels differently in SQL vs NoSQL in a horizontally scaled system. That visual will make this answer interview-ready.
+Do you want me to prepare that?
