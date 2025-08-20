@@ -956,3 +956,112 @@ Much cleaner ✅
 
 
 
+Perfect 👍 Let’s go step by step.
+
+---
+
+## **1. Promises in JavaScript**
+
+A **Promise** is an object that represents the eventual completion (or failure) of an asynchronous operation.
+It has 3 states:
+
+* **Pending** → initial state
+* **Fulfilled** → operation completed successfully (resolved)
+* **Rejected** → operation failed (rejected)
+
+✅ Example:
+
+```js
+let orderFood = new Promise((resolve, reject) => {
+    let foodAvailable = true;
+    if (foodAvailable) {
+        resolve("Food delivered 🍔");
+    } else {
+        reject("Food not available ❌");
+    }
+});
+
+orderFood
+    .then((msg) => console.log(msg))   // runs when resolved
+    .catch((err) => console.log(err)) // runs when rejected
+    .finally(() => console.log("Order process finished"));
+```
+
+---
+
+## **2. Async / Await**
+
+`async` and `await` are syntactic sugar over promises → they make asynchronous code look synchronous.
+
+✅ Example:
+
+```js
+function orderFood() {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve("Food delivered 🍕"), 2000);
+    });
+}
+
+async function eatFood() {
+    console.log("Ordering food...");
+    let food = await orderFood(); // waits until promise resolves
+    console.log(food);
+    console.log("Eating now 😋");
+}
+
+eatFood();
+```
+
+---
+
+## **3. `map()`**
+
+Used to **transform** each element of an array and return a **new array** of the same length.
+
+✅ Example:
+
+```js
+let numbers = [1, 2, 3, 4];
+let squares = numbers.map(n => n * n);
+console.log(squares); // [1, 4, 9, 16]
+```
+
+---
+
+## **4. `filter()`**
+
+Used to **filter elements** of an array based on a condition. Returns a **new array** with fewer elements.
+
+✅ Example:
+
+```js
+let numbers = [10, 15, 20, 25, 30];
+let even = numbers.filter(n => n % 2 === 0);
+console.log(even); // [10, 20, 30]
+```
+
+---
+
+## **5. `reduce()`**
+
+Used to reduce the array to a **single value** (like sum, product, etc.).
+It takes a **callback(accumulator, currentValue)** and an **initial value**.
+
+✅ Example:
+
+```js
+let numbers = [1, 2, 3, 4];
+let sum = numbers.reduce((acc, curr) => acc + curr, 0);
+console.log(sum); // 10
+```
+
+---
+
+👉 So in real projects:
+
+* **Promises** and **async/await** → for async tasks (APIs, DB calls)
+* **map/filter/reduce** → for processing arrays (data transformations, filtering, aggregations)
+
+---
+
+Do you want me to give you a **real-life Zomato example** using `map`, `filter`, `reduce` with async/await?
