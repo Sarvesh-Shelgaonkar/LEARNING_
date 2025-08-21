@@ -1,9 +1,5 @@
 # Operating System Notes - Last Minute Revision :white_check_mark: 
 
-###
-
-
----
 
 ## Most Asked Operating System Interview Questions
 
