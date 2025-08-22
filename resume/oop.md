@@ -212,3 +212,51 @@ This makes the system **flexible and scalable**, because if we replace `SportsCa
 
 ---
 
+
+
+
+### ✅ **Encapsulation (Car Example)**
+
+Encapsulation means **wrapping data (attributes) and behaviors (methods) into a single unit**, which is usually a **class**. For example, a `Car` class acts like a **capsule**, containing characteristics like `speed` and behaviors like `accelerate()` and `brake()`.
+
+It also provides **data security**. For instance, we should not allow other classes to directly set `speed = 100`. Instead, speed should change only through controlled methods like `accelerate()`. This prevents invalid or unsafe operations.
+
+To achieve this, we use:
+
+* **Access modifiers**: Make `speed` **private** so it can’t be accessed directly from outside.
+* **Getters and Setters**: These provide **controlled access** to private data. For example, `setSpeed()` can validate input before updating speed, and `getSpeed()` can return the current value.
+
+---
+
+✅ **Example in C++**
+
+```cpp
+class Car {
+private:
+    int speed;
+
+public:
+    Car() : speed(0) {}
+
+    void accelerate() {
+        if(speed < 150) speed += 10;
+    }
+
+    int getSpeed() {
+        return speed;
+    }
+};
+```
+
+Here:
+
+* `speed` is hidden (private).
+* Outside classes cannot directly change speed.
+* Controlled access is via `accelerate()` and `getSpeed()`.
+
+---
+
+🔥 **Short Interview Answer**:
+Encapsulation is about combining data and methods in one class and restricting direct access to sensitive data using access modifiers. For example, in a `Car` class, `speed` is private, so it can’t be changed directly. Instead, we provide **getter and setter methods**, which allow controlled, validated access.
+
+---
