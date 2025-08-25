@@ -260,3 +260,190 @@ Here:
 Encapsulation is about combining data and methods in one class and restricting direct access to sensitive data using access modifiers. For example, in a `Car` class, `speed` is private, so it can’t be changed directly. Instead, we provide **getter and setter methods**, which allow controlled, validated access.
 
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+Here’s a **clear and detailed explanation** of your points with examples:
+
+---
+
+### ✅ **Polymorphism**
+
+* **Definition**: Polymorphism is the ability of an object to behave in different forms based on the context.
+* **Example**:
+
+  * **Constructor Overloading** → Different constructors for the same class, but with different parameters.
+
+---
+
+### ✅ **Types of Polymorphism**
+
+---
+
+#### **1. Compile-Time Polymorphism (Static Binding)**
+
+* Achieved **at compile time**.
+* Implemented by:
+
+  * **Function Overloading**
+
+    * Same function name.
+    * Different number or types of parameters.
+  * **Operator Overloading** (C++ only)
+
+    * Same operator used for multiple purposes.
+
+**Example: Function Overloading (Java):**
+
+```java
+class Display {
+    void show(int a) {
+        System.out.println("Integer: " + a);
+    }
+    void show(String s) {
+        System.out.println("String: " + s);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Display obj = new Display();
+        obj.show(10);      // calls first method
+        obj.show("Hello"); // calls second method
+    }
+}
+```
+
+**Operator Overloading Example (C++):**
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Complex {
+    int real, imag;
+public:
+    Complex(int r, int i) : real(r), imag(i) {}
+    Complex operator + (Complex obj) {
+        return Complex(real + obj.real, imag + obj.imag);
+    }
+    void display() {
+        cout << real << " + " << imag << "i" << endl;
+    }
+};
+int main() {
+    Complex c1(3, 4), c2(1, 2);
+    Complex c3 = c1 + c2; // '+' is overloaded
+    c3.display();          // Output: 4 + 6i
+}
+```
+
+---
+
+#### **2. Runtime Polymorphism (Dynamic Binding)**
+
+* Achieved **at runtime** using **method overriding**.
+* **Condition**:
+
+  * Parent and child class must have a method with **same name**, **same parameters**, **different implementation**.
+  * Implemented using **inheritance**.
+* **Key Rule**:
+
+  * Which method gets called **depends on the object type, not the reference type**.
+
+---
+
+**Example (Java):**
+
+```java
+class Animal {
+    void sound() {
+        System.out.println("Animal makes a sound");
+    }
+}
+class Dog extends Animal {
+    void sound() {
+        System.out.println("Dog barks");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Animal obj = new Dog();  // reference of Animal, object of Dog
+        obj.sound();  // Output: Dog barks
+    }
+}
+```
+
+**Explanation:**
+
+* Compiler sees `Animal` reference → checks if `sound()` exists in `Animal`.
+* At **runtime**, object is `Dog` → `Dog`'s version is called.
+
+---
+
+### ✅ **Virtual Function (C++ concept)**
+
+* A **virtual function** is a member function in the base class that you want to override in the derived class.
+* Declared using the keyword `virtual` in the base class.
+* Ensures **runtime polymorphism** by enabling **dynamic dispatch** (decides at runtime which function to call based on the actual object).
+
+---
+
+**Example (C++):**
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Base {
+public:
+    virtual void display() {  // virtual function
+        cout << "Display from Base class" << endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void display() override {
+        cout << "Display from Derived class" << endl;
+    }
+};
+
+int main() {
+    Base* ptr;
+    Derived obj;
+    ptr = &obj;
+    ptr->display();  // Output: Display from Derived class
+}
+```
+
+**Why virtual?**
+
+* If `display()` in `Base` was not virtual, then `Base` version would always be called (static binding).
+* With `virtual`, we get **dynamic binding** → Derived version is called.
+
+---
+
+### ✅ **Summary for Quick Notes**
+
+* **Polymorphism**: Ability of the same function/object to behave differently based on context.
+* **Compile-time**:
+
+  * Function Overloading.
+  * Operator Overloading.
+* **Runtime**:
+
+  * Function Overriding (parent & child same method, same params, different implementation).
+  * Achieved via **virtual functions** in C++.
+
+---
+
+👉 Do you want me to **prepare a quick tabular difference between compile-time and runtime polymorphism with real-life examples** for your interview notes?
