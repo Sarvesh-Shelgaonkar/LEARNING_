@@ -100,8 +100,6 @@ Timestamps:
 
 
 
-Here’s a **detailed but simple explanation** for each question so you can answer confidently in an interview:
-
 ---
 
 ### ✅ **1. Difference between Git and GitHub**
@@ -316,11 +314,4 @@ git stash pop   # apply changes and remove from stash
 git stash list  # see stashed changes
 ```
 
----
-
-✅ **Do you want me to now make a**:
-✔ **One-page cheat sheet** (commands + quick notes)
-or
-✔ **30-second interview answers for these questions**
-or
-✔ **Both combined in a PDF for easy revision**?
+--
