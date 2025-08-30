@@ -1030,3 +1030,1024 @@ int main() {
 ---
 
 Do you want me to next **draw a memory diagram of a C++ program (stack, heap, data, code)** so you can **visualize** this better for interviews?
+
+
+
+
+
+
+
+
+
+
+
+Perfect 👍 You want **Arrays & Strings** in C++. Let’s break it down step by step with **clear explanations + code examples**.
+
+---
+
+# 🔹 1. 1D Arrays
+
+An **array** is a collection of elements of the same type stored in **contiguous memory**.
+
+### Declaration
+
+```cpp
+int arr[5];         // array of 5 integers
+int arr2[5] = {1,2,3,4,5};   // initialized
+```
+
+### Accessing elements
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int arr[5] = {10, 20, 30, 40, 50};
+
+    cout << "First element: " << arr[0] << endl;   // 10
+    cout << "Last element: " << arr[4] << endl;    // 50
+
+    // Traversing
+    for(int i=0; i<5; i++) {
+        cout << arr[i] << " ";
+    }
+    return 0;
+}
+```
+
+✅ Arrays are **0-indexed** (first element at index `0`).
+
+---
+
+# 🔹 2. 2D Arrays
+
+A **2D array** is like a table (rows × columns).
+
+### Declaration
+
+```cpp
+int matrix[3][3];               // 3x3 array
+int mat[2][3] = {{1,2,3}, {4,5,6}};  // 2 rows, 3 cols
+```
+
+### Accessing
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int mat[2][3] = {{1,2,3},{4,5,6}};
+
+    // Printing matrix
+    for(int i=0; i<2; i++) {
+        for(int j=0; j<3; j++) {
+            cout << mat[i][j] << " ";
+        }
+        cout << endl;
+    }
+    return 0;
+}
+```
+
+Output:
+
+```
+1 2 3
+4 5 6
+```
+
+✅ Stored row-wise in memory.
+
+---
+
+# 🔹 3. Char Arrays vs String Class
+
+### Char Array
+
+* Old C-style strings.
+* Stored as `char[]` ending with `'\0'` (null character).
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    char name[10] = "C++";  // null character auto-added
+    cout << name << endl;   // prints: C++
+}
+```
+
+👉 If you forget `'\0'`, the program may print garbage.
+
+### String Class (`std::string`)
+
+* Safer and easier to use (from `<string>` library).
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string name = "C++";
+    cout << name << endl;
+}
+```
+
+✅ Advantages of `string` class:
+
+* Dynamic length (no fixed size like arrays).
+* Built-in functions (`length()`, `substr()`, `find()`, etc.).
+
+---
+
+# 🔹 4. Common String Operations
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string s1 = "Hello";
+    string s2 = "World";
+
+    // Concatenation
+    string s3 = s1 + " " + s2;   
+    cout << s3 << endl;   // Hello World
+
+    // Length
+    cout << "Length: " << s1.length() << endl;   // 5
+
+    // Access characters
+    cout << s1[0] << endl;   // H
+    cout << s1.at(1) << endl; // e
+
+    // Substring
+    cout << s1.substr(1,3) << endl;  // ell
+
+    // Comparison
+    if(s1 == "Hello") cout << "Equal!" << endl;
+
+    // Find substring
+    cout << s3.find("World") << endl;  // index 6
+}
+```
+
+---
+
+# 📝 Summary
+
+* **1D Array**: Linear collection → `int arr[5]`.
+* **2D Array**: Table-like → `int mat[3][3]`.
+* **Char Array**: Old-style C strings → `char str[]`.
+* **String Class**: Modern C++ strings with useful methods.
+* **Common Ops**: Concatenation (`+`), length, substring, find, comparison.
+
+---
+
+👉 Do you want me to also show you **how arrays & strings are stored in memory (with diagrams)** so it’s super clear?
+
+
+
+
+
+
+
+
+
+
+Perfect 👍 You want **Arrays & Strings** in C++. Let’s break it down step by step with **clear explanations + code examples**.
+
+---
+
+# 🔹 1. 1D Arrays
+
+An **array** is a collection of elements of the same type stored in **contiguous memory**.
+
+### Declaration
+
+```cpp
+int arr[5];         // array of 5 integers
+int arr2[5] = {1,2,3,4,5};   // initialized
+```
+
+### Accessing elements
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int arr[5] = {10, 20, 30, 40, 50};
+
+    cout << "First element: " << arr[0] << endl;   // 10
+    cout << "Last element: " << arr[4] << endl;    // 50
+
+    // Traversing
+    for(int i=0; i<5; i++) {
+        cout << arr[i] << " ";
+    }
+    return 0;
+}
+```
+
+✅ Arrays are **0-indexed** (first element at index `0`).
+
+---
+
+# 🔹 2. 2D Arrays
+
+A **2D array** is like a table (rows × columns).
+
+### Declaration
+
+```cpp
+int matrix[3][3];               // 3x3 array
+int mat[2][3] = {{1,2,3}, {4,5,6}};  // 2 rows, 3 cols
+```
+
+### Accessing
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int mat[2][3] = {{1,2,3},{4,5,6}};
+
+    // Printing matrix
+    for(int i=0; i<2; i++) {
+        for(int j=0; j<3; j++) {
+            cout << mat[i][j] << " ";
+        }
+        cout << endl;
+    }
+    return 0;
+}
+```
+
+Output:
+
+```
+1 2 3
+4 5 6
+```
+
+✅ Stored row-wise in memory.
+
+---
+
+# 🔹 3. Char Arrays vs String Class
+
+### Char Array
+
+* Old C-style strings.
+* Stored as `char[]` ending with `'\0'` (null character).
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    char name[10] = "C++";  // null character auto-added
+    cout << name << endl;   // prints: C++
+}
+```
+
+👉 If you forget `'\0'`, the program may print garbage.
+
+### String Class (`std::string`)
+
+* Safer and easier to use (from `<string>` library).
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string name = "C++";
+    cout << name << endl;
+}
+```
+
+✅ Advantages of `string` class:
+
+* Dynamic length (no fixed size like arrays).
+* Built-in functions (`length()`, `substr()`, `find()`, etc.).
+
+---
+
+# 🔹 4. Common String Operations
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string s1 = "Hello";
+    string s2 = "World";
+
+    // Concatenation
+    string s3 = s1 + " " + s2;   
+    cout << s3 << endl;   // Hello World
+
+    // Length
+    cout << "Length: " << s1.length() << endl;   // 5
+
+    // Access characters
+    cout << s1[0] << endl;   // H
+    cout << s1.at(1) << endl; // e
+
+    // Substring
+    cout << s1.substr(1,3) << endl;  // ell
+
+    // Comparison
+    if(s1 == "Hello") cout << "Equal!" << endl;
+
+    // Find substring
+    cout << s3.find("World") << endl;  // index 6
+}
+```
+
+---
+
+# 📝 Summary
+
+* **1D Array**: Linear collection → `int arr[5]`.
+* **2D Array**: Table-like → `int mat[3][3]`.
+* **Char Array**: Old-style C strings → `char str[]`.
+* **String Class**: Modern C++ strings with useful methods.
+* **Common Ops**: Concatenation (`+`), length, substring, find, comparison.
+
+---
+
+👉 Do you want me to also show you **how arrays & strings are stored in memory (with diagrams)** so it’s super clear?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Good question 👍 You’re asking about the **meaning of each part** of this basic C++ program:
+
+```cpp
+#include<iostream>
+using namespace std;
+int main() {
+    return 0;
+}
+```
+
+Let’s break it down **line by line**:
+
+---
+
+### 🔹 `#include<iostream>`
+
+* `#include` is a **preprocessor directive**.
+* It tells the compiler: *“Before compiling, copy the contents of the file `<iostream>` into this program.”*
+* `<iostream>` is a standard header file that allows us to use **input/output streams** like:
+
+  * `cout` → console output
+  * `cin` → console input
+  * `cerr` → error messages
+  * `clog` → logging messages
+
+⚡ Without this line, you cannot use `cout` or `cin`.
+
+---
+
+### 🔹 `using namespace std;`
+
+* In C++, standard library classes and functions (like `cout`, `cin`, `string`, etc.) are kept inside a **namespace** called `std`.
+* `using namespace std;` means:
+
+  > “I want to use all standard library names without writing `std::` every time.”
+
+✅ Example with namespace:
+
+```cpp
+std::cout << "Hello";   // need std::
+```
+
+✅ With `using namespace std;`
+
+```cpp
+cout << "Hello";        // shorter
+```
+
+---
+
+### 🔹 `int main()`
+
+* `main()` is the **entry point** of every C++ program.
+* The operating system starts execution from `main()`.
+* `int` means the function returns an **integer value** to the operating system.
+
+---
+
+### 🔹 `{ ... }`
+
+* Curly braces define the **body of the function**.
+* Inside them, we write the instructions that the program will execute.
+* Right now, it’s empty.
+
+---
+
+### 🔹 `return 0;`
+
+* At the end of `main()`, we return a value to the **operating system**.
+* `0` traditionally means **successful execution**.
+* If you return some other number (e.g., `1`), it usually indicates an **error/abnormal termination**.
+
+Example:
+
+```cpp
+int main() {
+    return 0;  // success
+}
+```
+
+---
+
+# 📝 Summary
+
+* `#include<iostream>` → Adds input/output library.
+* `using namespace std;` → Allows using `cout`, `cin`, etc. without `std::`.
+* `int main()` → Program starts here, returns an integer to OS.
+* `{ ... }` → Contains the instructions of the program.
+* `return 0;` → Signals successful execution to the OS.
+
+---
+
+👉 Do you want me to **add `cout` and `cin` examples** inside this program so you see how these parts actually work in action?
+
+
+
+
+
+
+
+Great follow-up 👍 Let’s carefully tackle both questions:
+
+---
+
+# 🔹 1. What is `cin` and `cout`?
+
+### 👉 `cout`
+
+* **Meaning**: **C**haracter **OUT**put stream.
+* Used to print (send) data **from the program to the screen (console)**.
+* Belongs to the `iostream` library (`std::cout` inside namespace `std`).
+
+Example:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, C++!" << endl;
+    return 0;
+}
+```
+
+Output:
+
+```
+Hello, C++!
+```
+
+---
+
+### 👉 `cin`
+
+* **Meaning**: **C**haracter **IN**put stream.
+* Used to take input **from the keyboard into variables**.
+* Also part of `iostream`.
+
+Example:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int age;
+    cout << "Enter your age: ";
+    cin >> age;     // input stored in variable age
+    cout << "You entered: " << age << endl;
+    return 0;
+}
+```
+
+If you type `20`, output will be:
+
+```
+Enter your age: 20
+You entered: 20
+```
+
+✅ **Summary**:
+
+* `cout` → output stream (program → console).
+* `cin` → input stream (keyboard → program).
+* Both are **objects** defined in `iostream`.
+
+---
+
+# 🔹 2. What if we use `void main()` instead of `int main()`?
+
+### Standard C++ Rule:
+
+* The **C++ standard (ISO C++)** requires `main()` to return an `int`.
+* The **return value** of `main()` tells the **Operating System** whether the program ended successfully or with an error.
+
+  * `return 0;` → success.
+  * non-zero value → error.
+
+✅ Correct, standard form:
+
+```cpp
+int main() {
+    // code
+    return 0;
+}
+```
+
+---
+
+### Using `void main()`
+
+* Some old compilers (like **Turbo C++**, used in many schools/colleges in India) allowed `void main()`.
+* But this is **not standard C++**.
+* On modern compilers (like GCC, Clang, MSVC), `void main()` may:
+
+  * Show a **warning/error**, or
+  * Compile but behave unpredictably.
+
+Example:
+
+```cpp
+void main() {
+    cout << "Hello";
+}
+```
+
+⚠️ Works in Turbo C++, but **not portable**.
+
+---
+
+### Why is `int main()` preferred?
+
+1. **Standard compliant** (ISO C++).
+2. **OS receives exit code** (for automation, scripts, debugging).
+3. Ensures program portability across all compilers.
+
+---
+
+# 📝 Final Answer
+
+* `cin` = input stream (keyboard → variable).
+* `cout` = output stream (program → console).
+* `int main()` is the correct standard → return value tells OS if program ran successfully.
+* `void main()` = non-standard, works only in some old compilers → should be avoided.
+
+---
+
+👉 Do you want me to show you **how the return value from `main()` is actually used by the OS** (like checking program exit status)?
+
+
+
+
+
+
+
+
+
+
+
+Nice 👍 Let’s dive into **Data Types in C++** — the foundation for storing and working with data.
+
+---
+
+# 🔹 What is a Data Type?
+
+* A **data type** tells the compiler:
+
+  1. What kind of data will be stored (integer, float, character, etc.).
+  2. How much **memory** to reserve.
+  3. What **operations** are allowed on it.
+
+Example:
+
+```cpp
+int age = 20;   // integer type
+float price = 99.99;   // decimal type
+char grade = 'A';   // single character
+```
+
+---
+
+# 🔹 Types of Data Types in C++
+
+## 1. **Basic / Fundamental Data Types**
+
+These are the core building blocks:
+
+| Data Type | Meaning                                  | Size (typical) | Example                     |
+| --------- | ---------------------------------------- | -------------- | --------------------------- |
+| `int`     | Integer numbers                          | 4 bytes        | `int a = 10;`               |
+| `float`   | Decimal numbers (6–7 digits precision)   | 4 bytes        | `float pi = 3.14;`          |
+| `double`  | Decimal numbers (15–16 digits precision) | 8 bytes        | `double big = 3.141592653;` |
+| `char`    | Single character                         | 1 byte         | `char ch = 'A';`            |
+| `bool`    | Boolean (true/false)                     | 1 byte         | `bool isOn = true;`         |
+| `void`    | No value / empty                         | 0 bytes        | `void func() {}`            |
+
+---
+
+## 2. **Derived Data Types**
+
+Built using basic ones:
+
+* **Array** → collection of same type (`int arr[5]`).
+* **Pointer** → stores memory address (`int *ptr`).
+* **Reference** → alias for a variable.
+* **Function** → block of code that can return values.
+
+---
+
+## 3. **User-defined Data Types**
+
+Created by programmers:
+
+* **struct** (collection of variables).
+* **class** (OOP concept).
+* **enum** (set of named constants).
+* **typedef/using** (create new type names).
+
+---
+
+# 🔹 Modifiers in C++
+
+Modifiers change the **size/range** of basic data types.
+
+| Modifier    | Works with  | Example           | Description                                    |
+| ----------- | ----------- | ----------------- | ---------------------------------------------- |
+| `signed`    | int, char   | `signed int x;`   | Can hold +ve and -ve values (default for int). |
+| `unsigned`  | int, char   | `unsigned int y;` | Only +ve values → doubles the range.           |
+| `short`     | int         | `short s;`        | Smaller range, usually 2 bytes.                |
+| `long`      | int, double | `long l;`         | Larger range.                                  |
+| `long long` | int         | `long long big;`  | Very large numbers (8 bytes).                  |
+
+---
+
+# 🔹 Example Program
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int a = 10;
+    float b = 5.75;
+    double c = 12345.6789;
+    char d = 'Z';
+    bool e = true;
+    unsigned int f = 400;
+
+    cout << "Integer: " << a << endl;
+    cout << "Float: " << b << endl;
+    cout << "Double: " << c << endl;
+    cout << "Character: " << d << endl;
+    cout << "Boolean: " << e << endl;
+    cout << "Unsigned Int: " << f << endl;
+
+    return 0;
+}
+```
+
+✅ Output:
+
+```
+Integer: 10
+Float: 5.75
+Double: 12345.7
+Character: Z
+Boolean: 1
+Unsigned Int: 400
+```
+
+---
+
+# 📝 Quick Memory Sizes (on most compilers)
+
+* `char` → 1 byte
+* `bool` → 1 byte
+* `int` → 4 bytes
+* `float` → 4 bytes
+* `double` → 8 bytes
+* `long` → 4 bytes (on 32-bit), 8 bytes (on 64-bit)
+* `long long` → 8 bytes
+
+*(Exact size may vary by system/architecture → use `sizeof()` to check.)*
+
+---
+
+👉 Do you want me to show you a **diagram of memory layout** for these data types so you can visualize how they are stored?
+Perfect 👍 now let’s dive into **Operators in C++**.
+
+Operators are **symbols** that tell the compiler to perform operations on variables or values.
+
+---
+
+# 🔹 Categories of Operators in C++
+
+## 1. **Arithmetic Operators**
+
+Used for mathematical operations.
+
+| Operator | Example | Meaning                         |
+| -------- | ------- | ------------------------------- |
+| `+`      | `a + b` | Addition                        |
+| `-`      | `a - b` | Subtraction                     |
+| `*`      | `a * b` | Multiplication                  |
+| `/`      | `a / b` | Division (int/int → int result) |
+| `%`      | `a % b` | Modulus (remainder)             |
+
+Example:
+
+```cpp
+int a = 10, b = 3;
+cout << a + b; // 13
+cout << a / b; // 3 (integer division)
+cout << a % b; // 1
+```
+
+---
+
+## 2. **Relational (Comparison) Operators**
+
+Used to compare values (result = `true` or `false`).
+
+| Operator | Example  | Meaning          |
+| -------- | -------- | ---------------- |
+| `==`     | `a == b` | Equal            |
+| `!=`     | `a != b` | Not equal        |
+| `>`      | `a > b`  | Greater than     |
+| `<`      | `a < b`  | Less than        |
+| `>=`     | `a >= b` | Greater or equal |
+| `<=`     | `a <= b` | Less or equal    |
+
+---
+
+## 3. **Logical Operators**
+
+Work with boolean values (`true/false`).
+
+| Operator | Example           | Meaning                         |         |   |          |                                        |
+| -------- | ----------------- | ------------------------------- | ------- | - | -------- | -------------------------------------- |
+| `&&`     | `a > 5 && b < 10` | Logical AND (true if both true) |         |   |          |                                        |
+| \`       |                   | \`                              | \`a > 5 |   | b < 10\` | Logical OR (true if at least one true) |
+| `!`      | `!flag`           | NOT (reverses truth)            |         |   |          |                                        |
+
+---
+
+## 4. **Assignment Operators**
+
+Assign values to variables.
+
+| Operator | Example  | Meaning       |
+| -------- | -------- | ------------- |
+| `=`      | `a = 5`  | Assign 5 to a |
+| `+=`     | `a += 2` | `a = a + 2`   |
+| `-=`     | `a -= 2` | `a = a - 2`   |
+| `*=`     | `a *= 3` | `a = a * 3`   |
+| `/=`     | `a /= 2` | `a = a / 2`   |
+| `%=`     | `a %= 2` | `a = a % 2`   |
+
+---
+
+## 5. **Increment/Decrement Operators**
+
+Change variable by **1**.
+
+| Operator | Example        | Meaning                  |
+| -------- | -------------- | ------------------------ |
+| `++a`    | Pre-increment  | Increase first, then use |
+| `a++`    | Post-increment | Use first, then increase |
+| `--a`    | Pre-decrement  | Decrease first, then use |
+| `a--`    | Post-decrement | Use first, then decrease |
+
+Example:
+
+```cpp
+int x = 5;
+cout << ++x;  // 6 (increment first, then print)
+cout << x++;  // prints 6, then x becomes 7
+```
+
+---
+
+## 6. **Bitwise Operators**
+
+Work at **bit level** (very important for system programming).
+
+| Operator | Example  | Meaning                    |     |    |
+| -------- | -------- | -------------------------- | --- | -- |
+| `&`      | `a & b`  | AND                        |     |    |
+| \`       | \`       | \`a                        | b\` | OR |
+| `^`      | `a ^ b`  | XOR                        |     |    |
+| `~`      | `~a`     | NOT (flips bits)           |     |    |
+| `<<`     | `a << 1` | Left shift (multiply by 2) |     |    |
+| `>>`     | `a >> 1` | Right shift (divide by 2)  |     |    |
+
+Example:
+
+```cpp
+int a = 5, b = 3;
+cout << (a & b);  // 1 (0101 & 0011 = 0001)
+cout << (a | b);  // 7 (0101 | 0011 = 0111)
+```
+
+---
+
+## 7. **Conditional / Ternary Operator**
+
+Short form of `if-else`.
+
+```cpp
+int a = 10, b = 20;
+int max = (a > b) ? a : b;
+cout << max;  // 20
+```
+
+---
+
+## 8. **Comma Operator**
+
+Executes expressions left to right, result = last expression.
+
+```cpp
+int a = (5, 10);  // a = 10
+```
+
+---
+
+## 9. **sizeof Operator**
+
+Gives size of data type/variable in bytes.
+
+```cpp
+cout << sizeof(int);   // usually 4
+cout << sizeof(double); // usually 8
+```
+
+---
+
+## 10. **Pointer Operators**
+
+* `&` → Address-of operator
+* `*` → Dereference operator
+
+```cpp
+int x = 10;
+int *ptr = &x;   // store address
+cout << *ptr;    // prints 10
+```
+
+---
+
+# 📝 Summary
+
+* **Arithmetic** → `+ - * / %`
+* **Relational** → `== != > < >= <=`
+* **Logical** → `&& || !`
+* **Assignment** → `= += -= *= /=`
+* **Increment/Decrement** → `++ --`
+* **Bitwise** → `& | ^ ~ << >>`
+* **Ternary** → `(cond) ? val1 : val2`
+* **sizeof, comma, pointer ops**
+
+---
+
+👉 Do you want me to make a **big cheat-sheet table with ALL operators + examples** so you can quickly revise before tests?
+Great question 👍 Let’s carefully break this down.
+
+---
+
+## 🔹 **Operators Recap**
+
+* Operators are special symbols that perform operations on operands (variables, constants, etc.).
+* Based on the number of operands they work with, operators are categorized as:
+
+  * **Unary Operators** → work on **ONE** operand
+  * **Binary Operators** → work on **TWO** operands
+
+---
+
+## 1️⃣ **Unary Operators**
+
+👉 Operate on a **single operand**.
+
+### Examples in C++:
+
+* **Increment / Decrement**:
+
+  ```cpp
+  int x = 5;
+  ++x; // pre-increment → x becomes 6
+  x--; // post-decrement → x becomes 5
+  ```
+
+* **Unary minus (negation)**:
+
+  ```cpp
+  int a = 10;
+  int b = -a; // b = -10
+  ```
+
+* **Logical NOT**:
+
+  ```cpp
+  bool flag = true;
+  cout << !flag; // prints 0 (false)
+  ```
+
+* **Sizeof**:
+
+  ```cpp
+  cout << sizeof(int); // gives 4 (on most systems)
+  ```
+
+✅ Works only on **one operand**.
+
+---
+
+## 2️⃣ **Binary Operators**
+
+👉 Operate on **two operands**.
+
+### Categories & Examples:
+
+* **Arithmetic Operators**:
+
+  ```cpp
+  int a = 10, b = 3;
+  cout << a + b; // 13
+  cout << a - b; // 7
+  cout << a * b; // 30
+  cout << a / b; // 3 (integer division)
+  ```
+
+* **Relational Operators**:
+
+  ```cpp
+  cout << (a > b); // 1 (true)
+  cout << (a == b); // 0 (false)
+  ```
+
+* **Logical Operators**:
+
+  ```cpp
+  cout << (a > 5 && b < 5); // 1 (true)
+  cout << (a > 15 || b == 3); // 1 (true)
+  ```
+
+* **Assignment Operators**:
+
+  ```cpp
+  int x = 10;
+  x += 5; // x = 15
+  x *= 2; // x = 30
+  ```
+
+✅ Works on **two operands**.
+
+---
+
+## 🔑 **Main Difference**
+
+| Feature      | Unary Operator               | Binary Operator                       |
+| ------------ | ---------------------------- | ------------------------------------- |
+| **Operands** | 1                            | 2                                     |
+| **Examples** | `++x`, `--x`, `-x`, `!x`     | `a+b`, `a*b`, `a==b`                  |
+| **Usage**    | Modify/negate a single value | Perform operations between two values |
+
+---
+
+👉 Would you like me to also cover **ternary operator (`?:`)** next? It’s a special case after unary & binary.
