@@ -1,3 +1,5 @@
+https://chatgpt.com/share/68b2ccde-287c-800a-8dff-c3f0905761b7
+
 # SigmaGPT — Interview Preparation Sheet
 
 A complete prep sheet for interviews on **SigmaGPT (MERN + OpenAI API)**. Use this to rehearse your pitch, answer technical questions, and walk through code, architecture, scaling, and security decisions.
