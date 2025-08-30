@@ -2189,3 +2189,358 @@ public:
 | Edge values   | Not needed                                     | Must handle edge values (`nums[-1] = nums[n] = -∞`)        |
 | Goal          | Return **the peak** (only one)                 | Return **any** peak (possibly multiple)                    |
 | Strategy      | Binary Search with bounds `1` to `n-2`         | Binary Search with bounds `0` to `n-1` and **edge checks** |
+
+
+
+
+
+
+
+
+
+
+Perfect 👍 You’ve now tried **two approaches** to solve `Remove Duplicates from Sorted Array`.
+Here are crisp **interview-ready notes** comparing both.
+
+---
+
+# 📌 Remove Duplicates from Sorted Array (LeetCode #26)
+
+### 🔹 Problem
+
+* Input: A sorted array `nums`.
+* Task: Remove duplicates **in-place**, keeping only unique elements.
+* Return: The count of unique elements.
+* Extra condition: Use **O(1) extra memory**.
+
+---
+
+## ✅ Approach 1: Using `unordered_set`
+
+### Idea
+
+* Use a hash set to keep track of unique elements.
+* If a duplicate is found, decrement count.
+* Return the number of unique elements.
+
+### Code (Your version, simplified)
+
+```cpp
+int removeDuplicates(vector<int>& nums) {
+    unordered_set<int> st;
+    int count = nums.size();
+
+    for(int i = 0; i < nums.size(); i++) {
+        if(st.find(nums[i]) != st.end()) {
+            count--;                // duplicate found
+        } else {
+            st.insert(nums[i]);     // first time seeing element
+        }
+    }
+    return count;
+}
+```
+
+### ✅ Pros
+
+* Very easy to implement.
+* Works for **any array** (not just sorted).
+
+### ❌ Cons
+
+* Uses **extra O(n) space** (not in-place).
+* **Does not preserve order** of elements (unordered\_set scrambles).
+* ❌ Not acceptable for this specific LeetCode problem (violates constraints).
+
+---
+
+## ✅ Approach 2: Two-Pointer Method (Optimal)
+
+### Idea
+
+* Since array is **sorted**, duplicates are adjacent.
+* Use two pointers:
+
+  * `i` → last unique element’s index.
+  * `j` → scanning pointer.
+* When a new unique element is found, place it next to the last unique.
+
+### Code (Your final version)
+
+```cpp
+int removeDuplicates(vector<int>& nums) {
+    if(nums.empty()) return 0;
+
+    int i = 0;
+    for(int j = 1; j < nums.size(); j++) {
+        if(nums[j] != nums[i]) {   // found a new unique
+            nums[i+1] = nums[j];   // move it forward
+            i++;
+        }
+    }
+    return i + 1;   // length of unique part
+}
+```
+
+### ✅ Pros
+
+* **In-place** (O(1) extra space).
+* Preserves **sorted order**.
+* Optimal: O(n) time, O(1) space.
+* Accepted on LeetCode.
+
+### ❌ Cons
+
+* Works only because the array is sorted.
+* Needs a bit more careful pointer logic.
+
+---
+
+## 📊 Comparison
+
+| Approach          | Space | Time | Order Preserved? | Works on Unsorted? | Accepted on LeetCode? |
+| ----------------- | ----- | ---- | ---------------- | ------------------ | --------------------- |
+| **Unordered Set** | O(n)  | O(n) | ❌ No             | ✅ Yes              | ❌ No                  |
+| **Two-Pointer**   | O(1)  | O(n) | ✅ Yes            | ❌ No (needs sort)  | ✅ Yes                 |
+
+---
+
+👉 **Interview Tip**:
+
+* If asked in general: mention both (`unordered_set` is simpler, two-pointer is optimal).
+* If asked for this exact LeetCode (#26): go with **two-pointer**.
+
+---
+
+Would you like me to also prepare **notes for the follow-up (LeetCode #80: Remove Duplicates allowing at most twice)** in the same style? That’s usually the next interview step after this one.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Good one 👍 you’re trying to solve **Missing Number (LeetCode #268)**.
+But your code has a couple of **bugs**. Let’s carefully analyze:
+
+---
+
+## 🔍 Problems in Your Code
+
+```cpp
+sort(nums.begin(), nums.end());
+for(int i=1; i<=nums.size(); i++){     // ⚠️ loop condition wrong
+    if(nums[i] != nums[i-1] + 1){      // ⚠️ may access out of bounds
+        return nums[i] + 1;            // ⚠️ wrong return value
+    }
+}
+return -1;
+```
+
+### Issues:
+
+1. **Loop condition**:
+   `i <= nums.size()` → when `i == nums.size()`, you will access `nums[nums.size()]` (out of bounds). Should be `< nums.size()`.
+
+2. **Logic error in return**:
+   Suppose `nums = [0,1,3]`.
+   Your check sees `nums[2] != nums[1] + 1` → correct.
+   But you return `nums[i] + 1 = 3 + 1 = 4` ❌.
+   Expected answer is `2`.
+
+3. **Special cases**:
+
+   * If `0` is missing.
+   * If the last number `n` is missing.
+
+---
+
+## ✅ Correct Approach (Sorting Based)
+
+```cpp
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+
+        // Case 1: missing number is 0
+        if(nums[0] != 0) return 0;
+
+        // Case 2: missing number in the middle
+        for(int i = 1; i < nums.size(); i++) {
+            if(nums[i] != nums[i-1] + 1) {
+                return nums[i-1] + 1;
+            }
+        }
+
+        // Case 3: missing number is n
+        return nums.size();
+    }
+};
+```
+
+---
+
+## ✅ Optimal Approach (No Sorting, O(n) Time, O(1) Space)
+
+### XOR Trick
+
+```cpp
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        int xor1 = 0, xor2 = 0;
+
+        // xor all numbers 0..n
+        for(int i = 0; i <= n; i++) xor1 ^= i;
+
+        // xor all elements in nums
+        for(int num : nums) xor2 ^= num;
+
+        // missing number = xor1 ^ xor2
+        return xor1 ^ xor2;
+    }
+};
+```
+
+### Sum Formula Trick
+
+```cpp
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        int total = n * (n + 1) / 2;   // sum of 0..n
+        int sum = 0;
+        for(int num : nums) sum += num;
+        return total - sum;
+    }
+};
+```
+
+---
+
+## 📌 Notes for Interview
+
+* Brute force: sort + check gaps → O(n log n) time.
+* Optimal: XOR or sum formula → O(n) time, O(1) space.
+* Always check edge cases: missing `0`, missing `n`, missing middle number.
+
+---
+
+👉 Do you want me to also write **step-by-step dry run examples** for the XOR and sum formula approaches (since interviewers often ask why they work)?
+
+
+I see what you wrote 👍 You’re trying **Missing Number (LeetCode #268)** but your code has a few issues.
+
+---
+
+## 🔍 Problems in Your Code
+
+```cpp
+sort(nums.begin(),nums.end());
+for(int i=1;i<=nums.size();i++){          // ❌ loop goes out of bounds
+    if(nums[i]!=nums[i-1]+1){             // ❌ wrong check
+        return nums[i]+1;                 // ❌ wrong value returned
+    }
+}
+```
+
+### Issues
+
+1. `i <= nums.size()` → when `i == nums.size()`, you’ll access `nums[nums.size()]` which is **out of range**.
+2. When gap is found, the missing number is `nums[i-1] + 1`, not `nums[i] + 1`.
+3. Doesn’t handle edge cases:
+
+   * Missing `0` at the beginning.
+   * Missing `n` at the end.
+
+---
+
+## ✅ Fixed Sorting Solution
+
+```cpp
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+
+        // Case 1: missing number is 0
+        if(nums[0] != 0) return 0;
+
+        // Case 2: missing in the middle
+        for(int i = 1; i < nums.size(); i++) {
+            if(nums[i] != nums[i-1] + 1) {
+                return nums[i-1] + 1;
+            }
+        }
+
+        // Case 3: missing is n
+        return nums.size();
+    }
+};
+```
+
+---
+
+## ⚡ Optimal Approaches (Better Than Sorting)
+
+### 1. **Sum Formula**
+
+```cpp
+int missingNumber(vector<int>& nums) {
+    int n = nums.size();
+    int total = n * (n + 1) / 2;   // expected sum of 0..n
+    int sum = 0;
+    for(int num : nums) sum += num;
+    return total - sum;
+}
+```
+
+### 2. **XOR Trick**
+
+```cpp
+int missingNumber(vector<int>& nums) {
+    int n = nums.size();
+    int xorAll = 0, xorNums = 0;
+
+    for(int i = 0; i <= n; i++) xorAll ^= i;
+    for(int num : nums) xorNums ^= num;
+
+    return xorAll ^ xorNums;
+}
+```
+
+---
+
+## 📌 Interview Notes
+
+* Sorting works but is **O(n log n)**.
+* Sum formula and XOR methods are **O(n) time, O(1) space** → preferred.
+* Always check edge cases:
+
+  * Missing `0`
+  * Missing `n`
+  * Missing in the middle
+
+---
+
+👉 Do you want me to **dry run** the XOR approach with a small array (e.g. `[3,0,1]`) so you can see exactly how it cancels out to the missing number?
+
+
+
+
+
+
+
+
+
+
