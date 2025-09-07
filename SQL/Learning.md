@@ -4,7 +4,7 @@ ROADMAP : https://whimsical.com/database-management-5UrHgo4JpWyzseKB4zypDy
 Leetcode : https://leetcode.com/studyplan/top-sql-50/
 
 --- 
-## test ! 
+
 --- 
 
 # ** INTRODUCTION **
@@ -139,7 +139,7 @@ SELECT Name, Age FROM Employees WHERE Age > 30;
 
 ---
 
-## ✅ 2. SQL Data Types
+## ✅ 2. SQL Data Types -- > INT, VARCHAR, DATE, BOOLEAN
 
 ### 🔍 Explanation
 
